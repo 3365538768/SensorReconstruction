@@ -1,0 +1,28 @@
+name: 4DGaussians
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.7
+  - pip
+  - numpy=1.21.6
+  - matplotlib
+  - cmake
+  - pip:
+    - torch==1.13.1
+    - torchvision==0.14.1
+    - torchaudio==0.13.1
+    - mmcv==1.6.0
+    - matplotlib
+    - lpips
+    - plyfile
+    - pytorch_msssim
+    - open3d
+    - imageio[ffmpeg]
+    - scipy
+    - scikit-image
+    - tqdm
+    - Pillow
+    - configargparse
+    - tensorboard
+    - simple-knn 
