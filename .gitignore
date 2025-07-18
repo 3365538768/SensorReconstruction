@@ -12,3 +12,5 @@ submodules/
 my_script/blender_output
 my_script/inference_outputs
 my_script/outputs
+ECCV2022-RIFE/originframe
+ECCV2022-RIFE/SPLITS
