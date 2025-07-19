@@ -105,28 +105,28 @@ for index, viewpoint in enumerate(scene.getTestCameras()):
     gs_ply = init_3DGaussians_ply(points, scales_final, rotations_final, opacity_final, shs_final, [feature_dc_shape, feature_rest_shape])
     gs_ply.write(os.path.join(output_path,"time_{0:05d}.ply".format(index)))
 
-# ===== 新增: 在时间区间内均匀采样，输出预测的高斯点 =====
-print("Computing interpolated Gaussians (at least 100 steps).")
-# 收集所有相机时间，确定时间范围
-camera_times_all = [cam.time for cam in scene.getTrainCameras()] + [cam.time for cam in scene.getTestCameras()]
-if len(camera_times_all) == 0:
-    raise RuntimeError("No camera timestamps found to determine temporal range.")
+# # ===== 新增: 在时间区间内均匀采样，输出预测的高斯点 =====
+# print("Computing interpolated Gaussians (at least 100 steps).")
+# # 收集所有相机时间，确定时间范围
+# camera_times_all = [cam.time for cam in scene.getTrainCameras()] + [cam.time for cam in scene.getTestCameras()]
+# if len(camera_times_all) == 0:
+#     raise RuntimeError("No camera timestamps found to determine temporal range.")
 
-min_time, max_time = min(camera_times_all), max(camera_times_all)
-num_steps = max(30, len(camera_times_all))  # 至少 100 个时间步
-interp_times = np.linspace(min_time, max_time, num_steps)
+# min_time, max_time = min(camera_times_all), max(camera_times_all)
+# num_steps = max(30, len(camera_times_all))  # 至少 100 个时间步
+# interp_times = np.linspace(min_time, max_time, num_steps)
 
-interp_output_path = os.path.join(args.model_path, "gaussian_interpolated")
-os.makedirs(interp_output_path, exist_ok=True)
+# interp_output_path = os.path.join(args.model_path, "gaussian_interpolated")
+# os.makedirs(interp_output_path, exist_ok=True)
 
-for idx, t in enumerate(tqdm(interp_times)):
-    # 构造仅包含 time 属性的临时相机对象
-    dummy_cam = type('DummyCamera', (object,), {'time': float(t)})()
+# for idx, t in enumerate(tqdm(interp_times)):
+#     # 构造仅包含 time 属性的临时相机对象
+#     dummy_cam = type('DummyCamera', (object,), {'time': float(t)})()
 
-    points, scales_final, rotations_final, opacity_final, shs_final = get_state_at_time(gaussians, dummy_cam)
-    feature_dc_shape = gaussians._features_dc.shape[1]
-    feature_rest_shape = gaussians._features_rest.shape[1]
-    gs_ply = init_3DGaussians_ply(points, scales_final, rotations_final, opacity_final, shs_final, [feature_dc_shape, feature_rest_shape])
-    gs_ply.write(os.path.join(interp_output_path, f"time_{idx:05d}.ply"))
+#     points, scales_final, rotations_final, opacity_final, shs_final = get_state_at_time(gaussians, dummy_cam)
+#     feature_dc_shape = gaussians._features_dc.shape[1]
+#     feature_rest_shape = gaussians._features_rest.shape[1]
+#     gs_ply = init_3DGaussians_ply(points, scales_final, rotations_final, opacity_final, shs_final, [feature_dc_shape, feature_rest_shape])
+#     gs_ply.write(os.path.join(interp_output_path, f"time_{idx:05d}.ply"))
 
 print("done")
