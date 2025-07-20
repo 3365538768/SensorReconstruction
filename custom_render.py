@@ -31,7 +31,7 @@ def render_sequence(ply_dir, pattern, out_video, args):
 
     # 3) 构造 Scene
     scene = Scene(dataset, gaussians, load_iteration=args.iteration, shuffle=False)
-    cameras = list(scene.getVideoCameras())[128:129]
+    cameras = list(scene.getVideoCameras())[158:159]
     Ncams   = len(cameras)
 
     # 4) 查找 PLY
@@ -107,13 +107,13 @@ if __name__=="__main__":
     ModelHiddenParams(parser)
     parser.add_argument("--iteration", type=int, default=0,
                         help="加载模型迭代；0表示不加载（只读PLY）")
-    parser.add_argument("--ply_dir", type=str, default=r'D:\4DGaussians\my_script\inference_outputs\objects_world_small',
+    parser.add_argument("--ply_dir", type=str, default=r'/users/lshou/4DGaussians/my_script/inference_outputs/bend/objects_world',
                         help="PLY 文件夹路径")
     parser.add_argument("--pattern", type=str, default="object_*.ply")
     parser.add_argument("--views", type=int, default=10,
                         help="每个PLY渲染视角数")
     parser.add_argument("--scale_modifier", type=float, default=1.5)
-    parser.add_argument("--fps", type=int, default=10)
+    parser.add_argument("--fps", type=int, default=5)
 
     # 新增分辨率与编码质量参数
     parser.add_argument("--width", type=int, default=1920,
@@ -131,6 +131,7 @@ if __name__=="__main__":
     parser.add_argument("--quiet", action="store_true")
 
     args = get_combined_args(parser)
+    print(">>> using source_path =", args.source_path)
     render_sequence(
         ply_dir   = args.ply_dir,
         pattern   = args.pattern,

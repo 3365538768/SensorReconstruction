@@ -51,7 +51,7 @@ def render(
             campos=viewpoint_camera.camera_center.cuda(),
             prefiltered=False,
             debug=pipe.debug,
-            antialiasing=False,
+           
         )
         time_tensor = torch.tensor(viewpoint_camera.time,
                                    device=means3D.device
