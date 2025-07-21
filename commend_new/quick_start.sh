@@ -40,36 +40,35 @@ echo "步骤 3: 推理测试"
 echo "  qsub commend_new/inference_4dgs.sge.sh"
 echo ""
 
-# 询问用户是否要开始
-read -p "是否要开始执行数据预处理? (y/N): " start_preprocessing
+# 自动执行数据预处理（移除用户交互）
+echo "🚀 自动开始执行数据预处理..."
+echo ""
 
-if [[ "$start_preprocessing" =~ ^[Yy]$ ]]; then
+if command -v qsub &> /dev/null; then
+    echo "✅ 检测到 SGE 环境，提交数据预处理作业..."
+    job_id=$(qsub commend_new/data_preprocessing.sge.sh)
+    echo "✅ 数据预处理作业已提交: $job_id"
     echo ""
-    echo "🚀 提交数据预处理作业..."
-    
-    if command -v qsub &> /dev/null; then
-        job_id=$(qsub commend_new/data_preprocessing.sge.sh)
-        echo "✅ 数据预处理作业已提交: $job_id"
-        echo ""
-        echo "监控作业状态:"
-        echo "  qstat -u $USER"
-        echo ""
-        echo "查看作业日志:"
-        echo "  tail -f data_preprocessing.o*"
-        echo ""
-        echo "等数据预处理完成后，运行训练:"
-        echo "  export ACTION_NAME=\"your_action_name\""
-        echo "  qsub commend_new/train_4dgs.sge.sh"
-    else
-        echo "⚠️  警告: qsub 命令不可用"
-        echo "请在 CRC 集群的提交节点上运行此脚本"
-        echo ""
-        echo "手动提交命令:"
-        echo "  qsub commend_new/data_preprocessing.sge.sh"
-    fi
+    echo "📊 监控作业状态:"
+    echo "  qstat -u $USER"
+    echo ""
+    echo "📄 查看作业日志:"
+    echo "  tail -f data_preprocessing.o*"
+    echo ""
+    echo "⏭️  等数据预处理完成后，运行训练:"
+    echo "  export ACTION_NAME=\"your_action_name\""
+    echo "  qsub commend_new/train_4dgs.sge.sh"
+    echo ""
+    echo "📖 或者使用默认动作名称:"
+    echo "  qsub commend_new/train_4dgs.sge.sh"
 else
+    echo "⚠️  警告: qsub 命令不可用"
+    echo "请在 CRC 集群的提交节点上运行此脚本"
     echo ""
-    echo "📖 手动执行步骤:"
+    echo "🔧 手动提交命令:"
+    echo "  qsub commend_new/data_preprocessing.sge.sh"
+    echo ""
+    echo "📖 完整流程:"
     echo ""
     echo "1. 数据预处理:"
     echo "   qsub commend_new/data_preprocessing.sge.sh"
@@ -92,4 +91,4 @@ echo "  - 详细使用指南: cat commend_new/README.md"
 echo "  - 交互式流程: instruction/auto.md"
 echo "  - 项目文档: development_record.md"
 echo ""
-echo "✅ 快速开始演示完成" 
+echo "✅ 快速开始演示完成，数据预处理已自动启动" 

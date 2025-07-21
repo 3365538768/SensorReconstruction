@@ -136,11 +136,10 @@ echo "开始数据迁移..."
 cd "$PROJECT_ROOT"
 mkdir -p data/dnerf
 
-# 备份现有数据
+# 直接覆盖现有数据（不备份）
 if [ -d "data/dnerf/SPLITS" ]; then
-    backup_name="SPLITS_backup_$(date '+%Y%m%d_%H%M%S')"
-    mv data/dnerf/SPLITS data/dnerf/$backup_name
-    echo "已备份原有数据为: $backup_name"
+    echo "检测到现有数据，直接覆盖..."
+    rm -rf data/dnerf/SPLITS
 fi
 
 # 移动新数据

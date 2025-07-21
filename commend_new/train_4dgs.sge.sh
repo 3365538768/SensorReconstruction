@@ -1,9 +1,9 @@
 #!/bin/bash
 #$ -M $USER@nd.edu          # 自动使用当前用户邮箱
 #$ -m abe                   # 在作业开始（a）、结束（b）、中止（e）时发送邮件
-#$ -pe smp 16               # 分配 16 个 CPU 核心
+#$ -pe smp 8                # 分配 8 个 CPU 核心（降低资源需求）
 #$ -q gpu                   # 提交到 GPU 队列
-#$ -l gpu_card=2            # 请求 2 张 GPU 卡
+#$ -l gpu_card=1            # 请求 1 张 GPU 卡（降低资源需求）
 #$ -N train_4dgs            # 作业名称
 
 set -e  # 遇到错误立即退出

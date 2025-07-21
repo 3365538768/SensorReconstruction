@@ -19,6 +19,10 @@
 ### 基本使用流程
 
 ```bash
+# 方法1: 自动化执行（推荐）
+./commend_new/quick_start.sh
+
+# 方法2: 手动分步执行
 # 1. 数据预处理
 qsub commend_new/data_preprocessing.sge.sh
 
@@ -69,7 +73,7 @@ qsub commend_new/data_preprocessing.sge.sh
 - 生成渲染结果（train/test/video）
 - 导出逐帧 3DGS 模型
 
-**资源配置**: 16 CPU 核心 + 2 GPU 卡
+**资源配置**: 8 CPU 核心 + 1 GPU 卡
 
 **动作名称配置**:
 
@@ -144,8 +148,8 @@ qsub commend_new/inference_4dgs.sge.sh
 如需调整计算资源，修改脚本头部的 SGE 参数：
 
 ```bash
-#$ -pe smp 16        # CPU 核心数
-#$ -l gpu_card=2     # GPU 卡数
+#$ -pe smp 8         # CPU 核心数
+#$ -l gpu_card=1     # GPU 卡数
 ```
 
 ---
@@ -238,7 +242,7 @@ conda activate Gaussians4D
 ### 1. 资源配置优化
 
 - **数据预处理**: 1 GPU 卡足够，主要是 I/O 密集
-- **模型训练**: 建议 2 GPU 卡，加速训练过程
+- **模型训练**: 1 GPU 卡，优化资源使用
 - **推理测试**: 1 GPU 卡足够，主要是评估性能
 
 ### 2. 并行作业
@@ -256,8 +260,8 @@ export ACTION_NAME="dancing_03" && qsub commend_new/train_4dgs.sge.sh
 定期清理临时文件和旧的实验结果：
 
 ```bash
-# 清理备份文件
-find . -name "*_backup_*" -type d -mtime +7 -exec rm -rf {} \;
+# 清理旧的实验结果
+find output/dnerf/ -type d -mtime +7 -exec rm -rf {} \;
 
 # 清理临时推理结果
 find output/dnerf/*/inference_* -mtime +7 -exec rm -rf {} \;
