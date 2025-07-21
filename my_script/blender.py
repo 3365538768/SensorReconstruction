@@ -11,7 +11,7 @@ scene.render.image_settings.color_mode = 'RGBA'
 
 # —— 2. Workbench Studio + Cavity 模式 ——
 wb = scene.display.shading
-wb.color_type    = 'MATERIAL'
+wb.color_type    = 'TEXTURE'
 wb.light         = 'STUDIO'
 wb.show_shadows  = False
 wb.show_cavity   = True
