@@ -20,8 +20,9 @@ def read_ply_vertices(filepath):
     data = np.loadtxt(lines[header_end:header_end + vertex_count])
     return data[:, :3]
 
+
 # --- Load frames ---
-ply_dir = r"E:\notre_dame_project\code\show_cage\cages_pred"
+ply_dir = r"/users/zchen27/SensorReconstruction/my_script/inference_outputs/experiment2/cages_pred"
 ply_paths = sorted(glob.glob(os.path.join(ply_dir, "*.ply")))
 if not ply_paths:
     raise FileNotFoundError(f"No PLY files found in {ply_dir}")

@@ -362,14 +362,14 @@ def train_and_infer(args):
 if __name__=='__main__':
     import argparse
     p = argparse.ArgumentParser()
-    p.add_argument('--data_dir', type=str, default='data/bend')
+    p.add_argument('--data_dir', type=str, default='data/experiment1')
     p.add_argument('--batch_size', type=int, default=4)
     p.add_argument('--lr', type=float, default=1e-3)
     p.add_argument('--epochs', type=int, default=100)
     p.add_argument('--sensor_dim', type=int, default=512)
     p.add_argument('--cage_res', nargs=3, type=int, default=[15,15,15])
     p.add_argument('--num_workers', type=int, default=1)
-    p.add_argument('--out_dir', type=str, default='outputs/bend')
+    p.add_argument('--out_dir', type=str, default='outputs/experiment1')
     p.add_argument('--num_fourier_bands', type=int, default=8)
     p.add_argument('--num_time_bands', type=int, default=6)
     p.add_argument('--sensor_res', nargs=2, type=int, default=[10,10],

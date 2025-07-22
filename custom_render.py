@@ -18,21 +18,23 @@ from arguments import (
 )
 from utils.general_utils import safe_state
 
+
 def render_sequence(ply_dir, pattern, out_video, args):
     safe_state(args.quiet)
 
     # 1) 参数都在 args 里
-    dataset  = args
+    dataset = args
     pipeline = args
-    hyper    = args
+    hyper = args
 
     # 2) 初始化 GaussianModel
     gaussians = GaussianModel(dataset.sh_degree, hyper)
 
     # 3) 构造 Scene
-    scene = Scene(dataset, gaussians, load_iteration=args.iteration, shuffle=False)
-    cameras = list(scene.getVideoCameras())[158:159]
-    Ncams   = len(cameras)
+    scene = Scene(dataset, gaussians,
+                  load_iteration=args.iteration, shuffle=False)
+    cameras = list(scene.getVideoCameras())[63:64]
+    Ncams = len(cameras)
 
     # 4) 查找 PLY
     ply_paths = sorted(glob.glob(os.path.join(ply_dir, pattern)))
@@ -47,9 +49,9 @@ def render_sequence(ply_dir, pattern, out_video, args):
     print(f"Will render {Np} PLYs × {views} views = {total_frames} frames")
 
     # 6) 设备 & 背景
-    device   = torch.device(dataset.data_device)
+    device = torch.device(dataset.data_device)
     bg_color = torch.tensor(
-        [1,1,1] if dataset.white_background else [0,0,0],
+        [1, 1, 1] if dataset.white_background else [0, 0, 0],
         dtype=torch.float32, device=device
     )
 
@@ -67,15 +69,17 @@ def render_sequence(ply_dir, pattern, out_video, args):
             print(f"\n=== PLY {p+1}/{Np}: {os.path.basename(ply)} ===")
             gaussians.load_ply(ply)
             for v in range(views):
-                cam = cameras[cam_idx % Ncams]; cam_idx += 1
-                print(f"  frame {frame_idx+1}/{total_frames}: camera #{(cam_idx-1)%Ncams}")
+                cam = cameras[cam_idx % Ncams]
+                cam_idx += 1
+                print(
+                    f"  frame {frame_idx+1}/{total_frames}: camera #{(cam_idx-1)%Ncams}")
                 out = render(
                     cam, gaussians, pipeline, bg_color,
                     scaling_modifier=args.scale_modifier,
                     stage="coarse", cam_type=scene.dataset_type
                 )
-                img = (255 * out["render"].cpu().numpy().clip(0,1)
-                       ).astype("uint8").transpose(1,2,0)
+                img = (255 * out["render"].cpu().numpy().clip(0, 1)
+                       ).astype("uint8").transpose(1, 2, 0)
                 path = os.path.join(frames_dir, f"{frame_idx:05d}.png")
                 imageio.imwrite(path, img)
                 frame_idx += 1
@@ -88,7 +92,8 @@ def render_sequence(ply_dir, pattern, out_video, args):
         "-c:v", "libx264",
         "-pix_fmt", "yuv420p",
         "-vf", f"scale={args.width}:{args.height}",           # 指定输出分辨率
-        "-crf", str(args.ffmpeg_crf),                        # 控制质量，18~23 之间为高质量
+        # 控制质量，18~23 之间为高质量
+        "-crf", str(args.ffmpeg_crf),
         "-preset", args.ffmpeg_preset,                       # 预设（slow, medium, fast）
         "-b:v", args.bitrate,                                # 视频码率
         out_video
@@ -98,7 +103,7 @@ def render_sequence(ply_dir, pattern, out_video, args):
     print(f"\n✅ Rendered {frame_idx} frames → {out_video}")
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Render PLYs via Scene + continuous cycling video_cameras"
     )
@@ -107,12 +112,12 @@ if __name__=="__main__":
     ModelHiddenParams(parser)
     parser.add_argument("--iteration", type=int, default=0,
                         help="加载模型迭代；0表示不加载（只读PLY）")
-    parser.add_argument("--ply_dir", type=str, default=r'/users/lshou/4DGaussians/my_script/inference_outputs/bend/objects_world',
+    parser.add_argument("--ply_dir", type=str, default=r'/users/zchen27/SensorReconstruction/my_script/inference_outputs/experiment2/objects_world',
                         help="PLY 文件夹路径")
     parser.add_argument("--pattern", type=str, default="object_*.ply")
     parser.add_argument("--views", type=int, default=10,
                         help="每个PLY渲染视角数")
-    parser.add_argument("--scale_modifier", type=float, default=1.5)
+    parser.add_argument("--scale_modifier", type=float, default=1.0)
     parser.add_argument("--fps", type=int, default=5)
 
     # 新增分辨率与编码质量参数
@@ -133,8 +138,8 @@ if __name__=="__main__":
     args = get_combined_args(parser)
     print(">>> using source_path =", args.source_path)
     render_sequence(
-        ply_dir   = args.ply_dir,
-        pattern   = args.pattern,
-        out_video = args.out,
-        args      = args
+        ply_dir=args.ply_dir,
+        pattern=args.pattern,
+        out_video=args.out,
+        args=args
     )

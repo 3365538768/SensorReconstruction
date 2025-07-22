@@ -54,6 +54,164 @@ pip install -e submodules/simple-knn
 
 In our environment, we use pytorch=1.13.1+cu116.
 
+## Lightweight Cage Node Model Training
+
+### Overview
+
+The lightweight cage node model training provides an efficient approach for sensor-driven deformation prediction based on 4DGaussians output. This workflow combines server-side data processing with local interactive region selection.
+
+### Prerequisites
+
+- Completed 4DGaussians training with `gaussian_pertimestamp` output
+- Windows environment with user interface: `D:\4DGaussians\my_script\user\user.py`
+- Dependencies: `pip install dash plotly plyfile numpy torch dash-bootstrap-components`
+
+### Training Methods
+
+#### Method 1: Interactive Execution (Recommended for Development)
+
+```bash
+./commend_new/lightweight_cage_training.sh scene_name [source_path] [filter_percent]
+
+# Examples
+./commend_new/lightweight_cage_training.sh walking_01
+./commend_new/lightweight_cage_training.sh jumping_02 output/dnerf/jumping_02/gaussian_pertimestamp 0.15
+```
+
+#### Method 2: SGE Batch Job (Recommended for Production)
+
+```bash
+# Basic submission
+SCENE_NAME=walking_01 qsub commend_new/lightweight_cage_training.sge.sh
+
+# Custom parameters
+qsub -v "SCENE_NAME=jumping_02,FILTER_PERCENT=0.15,SENSOR_RES_H=16,SENSOR_RES_W=16" commend_new/lightweight_cage_training.sge.sh
+```
+
+### Hybrid Workflow: Server + Local Processing
+
+**Step 1: Server-side Data Processing**
+```bash
+./commend_new/lightweight_cage_training.sh scene_name
+# Script pauses and provides local processing instructions
+```
+
+**Step 2: Local Windows Processing**
+1. Navigate to `D:\4DGaussians\my_script\user\`
+2. Run `python user.py`
+3. Access http://localhost:8050
+4. Upload PLY file from server's filtered frames
+5. Use interface to select cage node region
+6. Adjust normal vector orientation (theta/phi)
+7. Click "Save & Predict" to generate `region.json`
+8. Transfer `region.json` and `sensor.csv` to server
+
+**Step 3: Continue Server-side Training**
+```bash
+./commend_new/lightweight_cage_training.sh scene_name continue
+```
+
+### Parameters Configuration
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `SCENE_NAME` | *Required* | Scene identifier |
+| `GAUSSIAN_SOURCE` | `output/dnerf/$SCENE_NAME/gaussian_pertimestamp` | Source gaussian point cloud path |
+| `FILTER_PERCENT` | `0.1` | Dynamic points filtering ratio (0.05-0.2) |
+| `NUM_WORKERS` | `1` | Number of GPUs |
+| `SENSOR_RES_H/W` | `10` | Sensor grid resolution |
+| `OUT_DIR` | `outputs/$SCENE_NAME` | Output directory |
+
+### File Structure
+
+**Input Data Structure:**
+```
+output/dnerf/scene_name/
+└── gaussian_pertimestamp/     # 4DGaussians generated per-frame point clouds
+    ├── timestamp_000.ply
+    └── ...
+```
+
+**Processed Data Structure:**
+```
+my_script/data/scene_name/
+├── frames/                    # Filtered dynamic point clouds
+├── gaussian_pertimestamp/     # Original point cloud backup
+├── region.json               # Cage node region definition
+├── sensor.csv                # Sensor data
+└── local_processing_instructions.md
+```
+
+**Output Structure:**
+```
+outputs/scene_name/
+├── deform_model_final.pth    # Final trained model
+├── checkpoints/              # Training checkpoints
+├── training_log.txt          # Training logs
+└── usage_guide.md           # Usage guide
+```
+
+### Performance Optimization
+
+**Filtering Ratio Guidelines:**
+- `0.05`: Simple scenes or resource-constrained environments
+- `0.1`: Balanced setting (recommended)
+- `0.2`: Complex scenes requiring more dynamic points
+
+**Sensor Resolution Options:**
+- `8x8`: Fast training, lower precision
+- `10x10`: Balanced (default)
+- `16x16`: High precision, longer training time
+
+### Troubleshooting
+
+**Common Issues:**
+
+1. **Gaussian point cloud data not found**
+   - Ensure 4DGaussians training completed successfully
+   - Verify `export_perframe_3DGS.py` was executed
+   - Check path correctness
+
+2. **No files generated after filtering**
+   - Increase filtering percentage (e.g., 0.05 → 0.1)
+   - Verify original point clouds have dynamic variations
+   - Check `get_movepoint.py` script functionality
+
+3. **region.json format error**
+   - Validate JSON syntax
+   - Ensure bbox and normal fields exist
+   - Verify numerical ranges are reasonable
+
+4. **Missing sensor data**
+   - Check filename is exactly `sensor.csv`
+   - Verify CSV format correctness
+   - Ensure sensor data dimensions match configuration
+
+### Post-Training Operations
+
+**Inference and Testing:**
+```bash
+python my_script/infer.py \
+    --data_dir my_script/data/scene_name \
+    --model_path outputs/scene_name/deform_model_final.pth \
+    --out_dir inference_outputs/scene_name
+```
+
+**Visualization and Rendering:**
+```bash
+python custom_render.py \
+    --ply_dir inference_outputs/scene_name \
+    --out scene_name.mp4 \
+    --width 1920 --height 1080
+```
+
+**Model Evaluation:**
+```bash
+python my_script/evaluate.py \
+    --data_dir my_script/data/scene_name \
+    --model_path outputs/scene_name/deform_model_final.pth
+```
+
 ## Data Preparation
 
 **For synthetic scenes:**

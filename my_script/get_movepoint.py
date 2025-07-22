@@ -79,11 +79,11 @@ if __name__ == "__main__":
         description="Extract top-n% dynamic points from a sequence of PLY frames"
     )
     parser.add_argument(
-        "--input_dir", type=str, default='data/scene2/frames_origin',
+        "--input_dir", type=str, default='my_script/data/experiment1',
         help="Directory containing input PLY frames"
     )
     parser.add_argument(
-        "--output_dir", type=str, default='data/scene2/frames_movepoint',
+        "--output_dir", type=str, default='data/experiment1/frames',
         help="Directory to write filtered PLYs"
     )
     parser.add_argument(

@@ -83,10 +83,6 @@ fi
 
 echo "✅ 动作名称设置为: $ACTION_NAME"
 
-# 创建配置文件夹并保存动作名称
-mkdir -p config
-echo "$ACTION_NAME" > config/action_name.txt
-
 #### ——— 6. 4DGaussians 训练 ———
 echo "开始 4DGaussians 训练..."
 echo "训练开始时间: $(date '+%Y-%m-%d %H:%M:%S')"
@@ -232,7 +228,4 @@ echo "  🎨 渲染图像: output/dnerf/$ACTION_NAME/{train,test,video}/ours_200
 echo "  📦 逐帧模型: output/dnerf/$ACTION_NAME/gaussian_pertimestamp/"
 echo ""
 echo "✅ 4DGaussians 训练流程全部完成！"
-echo ""
-echo "下一步可选操作:"
-echo "  - 运行推理测试: qsub commend_new/inference_4dgs.sge.sh"
-echo "  - 设置新动作名称: export ACTION_NAME=your_action_name" 
+

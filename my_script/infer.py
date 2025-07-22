@@ -379,10 +379,12 @@ def inference(args):
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(description="Deformation Prediction Inference Script")
-    parser.add_argument('--data_dir', type=str, default='test/bend_bag', help='Directory with sensor.csv & region.json')
-    parser.add_argument('--init_ply_path', type=str, default='test/bend_bag/init.ply', help='Initial PLY path')
-    parser.add_argument('--model_path', type=str, default='outputs/bend/deform_model_final.pth', help='Model weights path')
-    parser.add_argument('--out_dir', type=str, default='inference_outputs/bend', help='Output directory')
+    parser.add_argument('--data_dir', type=str, default='experiment2', help='Directory with sensor.csv & region.json')
+    parser.add_argument('--init_ply_path', type=str,
+                        default='experiment2/point_cloud.ply', help='Initial PLY path')
+    parser.add_argument('--model_path', type=str,
+                        default='outputs/experiment1/deform_model_final.pth', help='Model weights path')
+    parser.add_argument('--out_dir', type=str, default='inference_outputs/experiment2', help='Output directory')
     parser.add_argument('--sensor_dim', type=int, default=512, help='Sensor encoding dim')
     parser.add_argument('--cage_res', nargs=3, type=int, default=[15,15,15], help='Cage resolution')
     parser.add_argument('--sensor_res', nargs=2, type=int, default=[10,10], help='Sensor resolution H W')
