@@ -9,9 +9,8 @@ SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
 ORIGIN_DIR = os.path.join(SCRIPT_DIR, "originframe")
 RIFE_SCRIPT = os.path.join(SCRIPT_DIR, "inference_video.py")
 MODEL_DIR   = os.path.join(SCRIPT_DIR, "train_log")
-
-VIEWS    = ["A", "B"]
-TIME_MAP = {"A": 0.0, "B": 1.0}
+VIEWS = ["A","B","C","D","E"]
+TIME_MAP = {"A":0.000000,"B":0.250000,"C":0.500000,"D":0.750000,"E":1.000000}
 
 EXP   = 0
 SEG   = 2**EXP

@@ -1,0 +1,129 @@
+=== 静态场景推理数据准备与训练作业 ===
+作业开始时间: 2025-07-22 15:34:38
+执行用户: zchen27
+工作节点: qa-a10-034.crc.nd.edu
+GPU 状态:
+index, name, memory.used [MiB], memory.total [MiB]
+0, NVIDIA A10, 0 MiB, 23028 MiB
+1, NVIDIA A10, 967 MiB, 23028 MiB
+2, NVIDIA A10, 937 MiB, 23028 MiB
+3, NVIDIA A10, 949 MiB, 23028 MiB
+Python 环境验证:
+Python 3.7.12
+PyTorch: 1.13.1+cu117
+CUDA available: True
+GPU count: 1
+项目根目录: /users/zchen27/SensorReconstruction
+RIFE 工作目录: /users/zchen27/SensorReconstruction/ECCV2022-RIFE
+开始静态场景数据准备...
+✅ 发现 originframe 文件夹
+✅ 发现文件夹A
+创建静态场景: 复制文件夹A为文件夹B...
+警告: 文件夹B已存在，将先删除...
+✅ 文件夹A已复制为文件夹B
+文件夹A包含 66 张图片
+文件夹B包含 66 张图片
+配置静态场景参数...
+恢复原始 morepipeline.py 配置...
+✅ 静态场景配置完成
+VIEWS = ["A", "B"]
+TIME_MAP = {"A": 0.0, "B": 1.0}
+运行静态场景处理（跳过插帧）...
+[Processing] r_000.png
+[Processing] r_001.png
+[Processing] r_002.png
+[Processing] r_003.png
+[Processing] r_004.png
+[Processing] r_005.png
+[Processing] r_006.png
+[Processing] r_007.png
+[Processing] r_008.png
+[Processing] r_009.png
+[Processing] r_010.png
+[Processing] r_011.png
+[Processing] r_012.png
+[Processing] r_013.png
+[Processing] r_014.png
+[Processing] r_015.png
+[Processing] r_016.png
+[Processing] r_017.png
+[Processing] r_018.png
+[Processing] r_019.png
+[Processing] r_020.png
+[Processing] r_021.png
+[Processing] r_022.png
+[Processing] r_023.png
+[Processing] r_024.png
+[Processing] r_025.png
+[Processing] r_026.png
+[Processing] r_027.png
+[Processing] r_028.png
+[Processing] r_029.png
+[Processing] r_030.png
+[Processing] r_031.png
+[Processing] r_032.png
+[Processing] r_033.png
+[Processing] r_034.png
+[Processing] r_035.png
+[Processing] r_036.png
+[Processing] r_037.png
+[Processing] r_038.png
+[Processing] r_039.png
+[Processing] r_040.png
+[Processing] r_041.png
+[Processing] r_042.png
+[Processing] r_043.png
+[Processing] r_044.png
+[Processing] r_045.png
+[Processing] r_046.png
+[Processing] r_047.png
+[Processing] r_048.png
+[Processing] r_049.png
+[Processing] r_050.png
+[Processing] r_051.png
+[Processing] r_052.png
+[Processing] r_053.png
+[Processing] r_054.png
+[Processing] r_055.png
+[Processing] r_056.png
+[Processing] r_057.png
+[Processing] r_058.png
+[Processing] r_059.png
+[Processing] r_060.png
+[Processing] r_061.png
+[Processing] r_062.png
+[Processing] r_063.png
+[Processing] r_064.png
+[Processing] r_065.png
+Done! Results saved in: /users/zchen27/SensorReconstruction/ECCV2022-RIFE/FINAL
+FINAL 目录包含 2 个时间点目录
+✅ 静态场景处理完成
+开始数据分割和迁移...
+Split complete. Results in: /users/zchen27/SensorReconstruction/ECCV2022-RIFE/SPLITS
+Removed original FINAL folder.
+数据分割结果:
+  训练集: 106 张图片
+  验证集: 12 张图片
+  测试集: 14 张图片
+检测到现有数据，直接覆盖...
+✅ 数据迁移完成
+开始 4DGaussians 静态推理训练...
+自动生成动作名称: static_20250722_153447
+训练输出目录: output/dnerf/static_20250722_153447
+训练端口: 6017
+开始 4DGaussians 训练...
+Optimizing 
+Output folder: ./output/dnerf/static_20250722_153447 [22/07 15:34:53]
+feature_dim: 256 [22/07 15:34:55]
+Traceback (most recent call last):
+  File "train.py", line 429, in <module>
+    training(lp.extract(args), hp.extract(args), op.extract(args), pp.extract(args), args.test_iterations, args.save_iterations, args.checkpoint_iterations, args.start_checkpoint, args.debug_from, args.expname)
+  File "train.py", line 303, in training
+    scene = Scene(dataset, gaussians, load_iteration=None)
+  File "/users/zchen27/SensorReconstruction/scene/__init__.py", line 45, in __init__
+    scene_info = sceneLoadTypeCallbacks["Blender"](args.source_path, args.white_background, args.eval, args.extension)
+  File "/users/zchen27/SensorReconstruction/scene/dataset_readers.py", line 320, in readNerfSyntheticInfo
+    timestamp_mapper, max_time = read_timeline(path)
+  File "/users/zchen27/SensorReconstruction/scene/dataset_readers.py", line 299, in read_timeline
+    with open(os.path.join(path, "transforms_train.json")) as json_file:
+FileNotFoundError: [Errno 2] No such file or directory: '/users/zchen27/SensorReconstruction/data/dnerf/SPLITS/transforms_train.json'

@@ -143,6 +143,12 @@ echo "✅ 静态场景处理完成"
 #### ——— 7. 数据分割和迁移 ———
 echo "开始数据分割和迁移..."
 
+# 先确保符号链接不干扰本地处理
+cd "$RIFE_DIR"
+if [ -L "SPLITS" ]; then
+    rm SPLITS  # 删除符号链接
+fi
+
 # 运行 get_together.py 进行数据分割
 python get_together.py
 
@@ -164,8 +170,8 @@ echo "  测试集: $TEST_COUNT 张图片"
 # 迁移数据到项目标准位置
 cd "$PROJECT_ROOT"
 
-# 备份现有数据（如果存在）
-if [ -d "data/dnerf/SPLITS" ]; then
+# 清理现有数据（如果存在）
+if [ -e "data/dnerf/SPLITS" ]; then
     echo "检测到现有数据，直接覆盖..."
     rm -rf data/dnerf/SPLITS
 fi

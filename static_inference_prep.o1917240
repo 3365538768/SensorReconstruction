@@ -1,0 +1,109 @@
+=== 静态场景推理数据准备与训练作业 ===
+作业开始时间: 2025-07-22 15:31:09
+执行用户: zchen27
+工作节点: qa-a10-026.crc.nd.edu
+GPU 状态:
+index, name, memory.used [MiB], memory.total [MiB]
+0, NVIDIA A10, 950 MiB, 23028 MiB
+1, NVIDIA A10, 0 MiB, 23028 MiB
+2, NVIDIA A10, 0 MiB, 23028 MiB
+3, NVIDIA A10, 0 MiB, 23028 MiB
+Python 环境验证:
+Python 3.7.12
+PyTorch: 1.13.1+cu117
+/users/zchen27/.conda/envs/Gaussians4D/lib/python3.7/site-packages/torch/cuda/__init__.py:88: UserWarning: CUDA initialization: Unexpected error from cudaGetDeviceCount(). Did you run some cuda functions before calling NumCudaDevices() that might have already set an error? Error 805: MPS client failed to connect to the MPS control daemon or the MPS server (Triggered internally at ../c10/cuda/CUDAFunctions.cpp:109.)
+  return torch._C._cuda_getDeviceCount() > 0
+CUDA available: False
+GPU count: 1
+项目根目录: /users/zchen27/SensorReconstruction
+RIFE 工作目录: /users/zchen27/SensorReconstruction/ECCV2022-RIFE
+开始静态场景数据准备...
+✅ 发现 originframe 文件夹
+✅ 发现文件夹A
+创建静态场景: 复制文件夹A为文件夹B...
+警告: 文件夹B已存在，将先删除...
+✅ 文件夹A已复制为文件夹B
+文件夹A包含 66 张图片
+文件夹B包含 66 张图片
+配置静态场景参数...
+恢复原始 morepipeline.py 配置...
+✅ 静态场景配置完成
+VIEWS = ["A", "B"]
+TIME_MAP = {"A": 0.0, "B": 1.0}
+运行静态场景处理（跳过插帧）...
+[Processing] r_000.png
+[Processing] r_001.png
+[Processing] r_002.png
+[Processing] r_003.png
+[Processing] r_004.png
+[Processing] r_005.png
+[Processing] r_006.png
+[Processing] r_007.png
+[Processing] r_008.png
+[Processing] r_009.png
+[Processing] r_010.png
+[Processing] r_011.png
+[Processing] r_012.png
+[Processing] r_013.png
+[Processing] r_014.png
+[Processing] r_015.png
+[Processing] r_016.png
+[Processing] r_017.png
+[Processing] r_018.png
+[Processing] r_019.png
+[Processing] r_020.png
+[Processing] r_021.png
+[Processing] r_022.png
+[Processing] r_023.png
+[Processing] r_024.png
+[Processing] r_025.png
+[Processing] r_026.png
+[Processing] r_027.png
+[Processing] r_028.png
+[Processing] r_029.png
+[Processing] r_030.png
+[Processing] r_031.png
+[Processing] r_032.png
+[Processing] r_033.png
+[Processing] r_034.png
+[Processing] r_035.png
+[Processing] r_036.png
+[Processing] r_037.png
+[Processing] r_038.png
+[Processing] r_039.png
+[Processing] r_040.png
+[Processing] r_041.png
+[Processing] r_042.png
+[Processing] r_043.png
+[Processing] r_044.png
+[Processing] r_045.png
+[Processing] r_046.png
+[Processing] r_047.png
+[Processing] r_048.png
+[Processing] r_049.png
+[Processing] r_050.png
+[Processing] r_051.png
+[Processing] r_052.png
+[Processing] r_053.png
+[Processing] r_054.png
+[Processing] r_055.png
+[Processing] r_056.png
+[Processing] r_057.png
+[Processing] r_058.png
+[Processing] r_059.png
+[Processing] r_060.png
+[Processing] r_061.png
+[Processing] r_062.png
+[Processing] r_063.png
+[Processing] r_064.png
+[Processing] r_065.png
+Done! Results saved in: /users/zchen27/SensorReconstruction/ECCV2022-RIFE/FINAL
+FINAL 目录包含 2 个时间点目录
+✅ 静态场景处理完成
+开始数据分割和迁移...
+Traceback (most recent call last):
+  File "get_together.py", line 14, in <module>
+    os.makedirs(os.path.join(SPLITS_DIR, sp), exist_ok=True)
+  File "/users/zchen27/.conda/envs/Gaussians4D/lib/python3.7/os.py", line 223, in makedirs
+    mkdir(name, mode)
+FileNotFoundError: [Errno 2] No such file or directory: '/users/zchen27/SensorReconstruction/ECCV2022-RIFE/SPLITS/test'
