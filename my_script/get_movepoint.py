@@ -44,8 +44,26 @@ def extract_top_dynamic_points(
     # 2. Load all frames into a list of (N,3) arrays
     frames = [load_ply_points(p) for p in ply_paths]
     num_frames = len(frames)
-    N = frames[0].shape[0]
-    print(f"Loaded {num_frames} frames, each with {N} points")
+    
+    # 2.1. Check point counts and handle dynamic point changes
+    point_counts = [frame.shape[0] for frame in frames]
+    min_points = min(point_counts)
+    max_points = max(point_counts)
+    
+    print(f"Loaded {num_frames} frames")
+    print(f"Point count range: {min_points} - {max_points}")
+    
+    if min_points != max_points:
+        print(f"⚠️  Warning: Point counts vary across frames!")
+        print(f"   This is normal for 4DGaussians due to densification during training")
+        print(f"   Truncating all frames to {min_points} points for consistency")
+        
+        # Truncate all frames to the minimum point count
+        frames = [frame[:min_points] for frame in frames]
+        N = min_points
+    else:
+        N = frames[0].shape[0]
+        print(f"All frames have consistent {N} points")
     
     # 3. Stack into (F, N, 3) array
     data = np.stack(frames, axis=0)  # shape = (F, N, 3)
