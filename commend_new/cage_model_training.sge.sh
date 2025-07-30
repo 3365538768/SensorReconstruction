@@ -18,6 +18,10 @@ echo "作业ID: $JOB_ID"
 echo "开始时间: $(date)"
 echo "========================================="
 
+# 创建SGE日志备份目录
+SGE_LOG_BACKUP_DIR="logs/sge_jobs/cage_model"
+mkdir -p "$SGE_LOG_BACKUP_DIR"
+
 # 激活环境
 echo "激活 Gaussians4D 环境..."
 source ~/.bashrc
@@ -207,6 +211,65 @@ OBJS_COUNT=$(find "$OBJS_DIR" -name "*.ply" 2>/dev/null | wc -l)
 
 echo "训练输出统计:"
 echo "  裁剪边界框PLY: $BBOX_COUNT 个文件"
+echo "  预测笼子PLY: $CAGES_COUNT 个文件"
+echo "  重建对象PLY: $OBJS_COUNT 个文件"
+
+echo "========================================="
+echo "笼节点模型训练完成"
+echo "结束时间: $(date)"
+echo "========================================="
+
+# 备份SGE日志到logs文件夹
+if [ ! -z "$JOB_ID" ]; then
+    echo "备份SGE日志文件到logs文件夹..."
+    LOG_BACKUP_DIR="logs/sge_jobs/cage_model/$ACTION_NAME"
+    mkdir -p "$LOG_BACKUP_DIR"
+    
+    TIMESTAMP=$(date '+%Y%m%d_%H%M%S')
+    
+    # 复制SGE输出和错误日志
+    if [ -f "cage_training.o$JOB_ID" ]; then
+        cp "cage_training.o$JOB_ID" "$LOG_BACKUP_DIR/sge_output_${TIMESTAMP}.log"
+        echo "✅ SGE输出日志已备份: $LOG_BACKUP_DIR/sge_output_${TIMESTAMP}.log"
+    fi
+    
+    if [ -f "cage_training.e$JOB_ID" ]; then
+        cp "cage_training.e$JOB_ID" "$LOG_BACKUP_DIR/sge_error_${TIMESTAMP}.log"
+        echo "✅ SGE错误日志已备份: $LOG_BACKUP_DIR/sge_error_${TIMESTAMP}.log"
+    fi
+    
+    # 创建作业信息摘要
+    echo "Creating cage model job summary..."
+    cat > "$LOG_BACKUP_DIR/job_summary_${TIMESTAMP}.txt" << EOF
+SGE作业信息摘要 - 笼节点模型训练
+================================
+作业ID: $JOB_ID
+作业名称: 笼节点模型训练
+实验名称: $ACTION_NAME
+开始时间: $(date '+%Y-%m-%d %H:%M:%S')
+结束时间: $(date '+%Y-%m-%d %H:%M:%S')
+节点信息: $(hostname)
+数据目录: $DATA_DIR
+输出目录: $OUT_DIR
+训练结果统计:
+  - 模型文件: $MODEL_FILE
+  - 模型大小: $MODEL_SIZE
+  - 裁剪边界框PLY: $BBOX_COUNT 个文件
+  - 预测笼子PLY: $CAGES_COUNT 个文件  
+  - 重建对象PLY: $OBJS_COUNT 个文件
+训练参数:
+  - 批大小: $BATCH_SIZE
+  - 训练轮数: $EPOCHS
+  - 学习率: $LEARNING_RATE
+  - 传感器维度: $SENSOR_DIM
+  - 笼网格分辨率: ${CAGE_RES_X}x${CAGE_RES_Y}x${CAGE_RES_Z}
+  - 传感器分辨率: ${SENSOR_RES_H}x${SENSOR_RES_W}
+状态: 训练成功完成
+EOF
+    echo "✅ 作业摘要已创建: $LOG_BACKUP_DIR/job_summary_${TIMESTAMP}.txt"
+fi
+
+echo "✅ 笼节点模型训练流程完成，所有日志已备份到logs文件夹"
 echo "  预测笼节点PLY: $CAGES_COUNT 个文件"
 echo "  重建物体PLY: $OBJS_COUNT 个文件"
 

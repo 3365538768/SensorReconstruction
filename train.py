@@ -28,6 +28,7 @@ from utils.timer import Timer
 from utils.loader_utils import FineSampler, get_stamp_list
 import lpips
 from utils.scene_utils import render_training_image
+from utils.logging_utils import create_training_logger
 from time import time
 import copy
 
@@ -40,7 +41,7 @@ except ImportError:
     TENSORBOARD_FOUND = False
 def scene_reconstruction(dataset, opt, hyper, pipe, testing_iterations, saving_iterations, 
                          checkpoint_iterations, checkpoint, debug_from,
-                         gaussians, scene, stage, tb_writer, train_iter,timer):
+                         gaussians, scene, stage, tb_writer, train_iter,timer, training_logger=None):
     first_iter = 0
 
     gaussians.training_setup(opt)
@@ -230,6 +231,21 @@ def scene_reconstruction(dataset, opt, hyper, pipe, testing_iterations, saving_i
             ema_loss_for_log = 0.4 * loss.item() + 0.6 * ema_loss_for_log
             ema_psnr_for_log = 0.4 * psnr_ + 0.6 * ema_psnr_for_log
             total_point = gaussians._xyz.shape[0]
+            
+            # 记录训练统计到日志
+            if training_logger and iteration % 10 == 0:
+                training_logger.log_iteration_stats(
+                    iteration=iteration,
+                    stage=stage,
+                    loss=loss.item(),
+                    ema_loss=ema_loss_for_log,
+                    psnr=psnr_,
+                    ema_psnr=ema_psnr_for_log,
+                    total_points=total_point,
+                    l1_loss=Ll1.item(),
+                    elapsed_time=iter_start.elapsed_time(iter_end)
+                )
+            
             if iteration % 10 == 0:
                 progress_bar.set_postfix({"Loss": f"{ema_loss_for_log:.{7}f}",
                                           "psnr": f"{psnr_:.{2}f}",
@@ -297,17 +313,63 @@ def scene_reconstruction(dataset, opt, hyper, pipe, testing_iterations, saving_i
 def training(dataset, hyper, opt, pipe, testing_iterations, saving_iterations, checkpoint_iterations, checkpoint, debug_from, expname):
     # first_iter = 0
     tb_writer = prepare_output_and_logger(expname)
+    
+    # 创建训练日志记录器
+    training_logger = create_training_logger("4DGaussians", expname)
+    
+    # 记录训练配置
+    training_config = {
+        "model_params": vars(dataset),
+        "optimization_params": vars(opt),
+        "pipeline_params": vars(pipe),
+        "hyper_params": vars(hyper),
+        "testing_iterations": testing_iterations,
+        "saving_iterations": saving_iterations,
+        "checkpoint_iterations": checkpoint_iterations
+    }
+    training_logger.log_config(training_config)
+    
+    # 记录训练开始
+    training_logger.log_training_start(
+        expname=expname,
+        model_path=args.model_path,
+        coarse_iterations=opt.coarse_iterations,
+        fine_iterations=opt.iterations
+    )
+    
     gaussians = GaussianModel(dataset.sh_degree, hyper)
     dataset.model_path = args.model_path
     timer = Timer()
     scene = Scene(dataset, gaussians, load_iteration=None)
     timer.start()
+    
+    # 粗糙训练阶段
+    training_logger.logger.info("🔄 开始粗糙训练阶段")
     scene_reconstruction(dataset, opt, hyper, pipe, testing_iterations, saving_iterations,
                              checkpoint_iterations, checkpoint, debug_from,
-                             gaussians, scene, "coarse", tb_writer, opt.coarse_iterations,timer)
+                             gaussians, scene, "coarse", tb_writer, opt.coarse_iterations,timer, training_logger)
+    
+    # 精细训练阶段
+    training_logger.logger.info("🔄 开始精细训练阶段")
     scene_reconstruction(dataset, opt, hyper, pipe, testing_iterations, saving_iterations,
                          checkpoint_iterations, checkpoint, debug_from,
-                         gaussians, scene, "fine", tb_writer, opt.iterations,timer)
+                         gaussians, scene, "fine", tb_writer, opt.iterations,timer, training_logger)
+    
+    # 记录训练完成
+    final_points = gaussians.get_xyz.shape[0] if hasattr(gaussians, 'get_xyz') else 0
+    training_logger.log_training_complete(
+        final_point_count=final_points,
+        model_path=args.model_path
+    )
+    
+    # 保存性能指标
+    training_logger.save_metrics()
+    
+    # 显示日志摘要
+    log_summary = training_logger.get_log_summary()
+    print("📊 训练日志摘要:")
+    for key, value in log_summary.items():
+        print(f"  {key}: {value}")
 
 def prepare_output_and_logger(expname):    
     if not args.model_path:
@@ -324,10 +386,18 @@ def prepare_output_and_logger(expname):
     with open(os.path.join(args.model_path, "cfg_args"), 'w') as cfg_log_f:
         cfg_log_f.write(str(Namespace(**vars(args))))
 
+    # 同时在logs文件夹创建备份
+    log_backup_dir = os.path.join("logs", "tensorboard", "4DGaussians", expname)
+    os.makedirs(log_backup_dir, exist_ok=True)
+    
     # Create Tensorboard writer
     tb_writer = None
     if TENSORBOARD_FOUND:
+        # 主要的tensorboard日志
         tb_writer = SummaryWriter(args.model_path)
+        # 备份的tensorboard日志
+        tb_backup_writer = SummaryWriter(log_backup_dir)
+        print(f"Tensorboard日志备份到: {log_backup_dir}")
     else:
         print("Tensorboard not available: not logging progress")
     return tb_writer

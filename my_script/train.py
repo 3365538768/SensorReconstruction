@@ -251,6 +251,26 @@ class DeformModelEnhanced(nn.Module):
 # =========================================
 def train_and_infer(args):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    
+    # 创建训练日志记录器
+    experiment_name = os.path.basename(args.data_dir)
+    training_logger = create_training_logger("cage_model", experiment_name)
+    
+    # 记录训练配置
+    training_config = {
+        "data_dir": args.data_dir,
+        "out_dir": args.out_dir,
+        "cage_res": args.cage_res,
+        "sensor_res": args.sensor_res,
+        "batch_size": args.batch_size,
+        "epochs": args.epochs,
+        "lr": args.lr,
+        "sensor_dim": args.sensor_dim,
+        "num_fourier_bands": args.num_fourier_bands,
+        "num_time_bands": args.num_time_bands,
+        "device": str(device)
+    }
+    training_logger.log_config(training_config)
 
     # --- dataset & adjacency ---
     ds = DeformDataset(
@@ -302,10 +322,19 @@ def train_and_infer(args):
     os.makedirs(objs_dir,  exist_ok=True)
 
     # --- training loop ---
+    training_logger.log_training_start(
+        dataset_size=len(ds),
+        batch_size=args.batch_size,
+        total_epochs=args.epochs,
+        model_parameters=sum(p.numel() for p in model.parameters())
+    )
+    
     for epoch in range(args.epochs):
         model.train()
         total_loss = 0.0
-        for sensor, gt_def, t_norm in tqdm(dl, desc=f'Epoch {epoch+1}'):
+        epoch_losses = []
+        
+        for batch_idx, (sensor, gt_def, t_norm) in enumerate(tqdm(dl, desc=f'Epoch {epoch+1}')):
             sensor = sensor.to(device)
             gt_def  = gt_def.to(device)
             t_norm  = t_norm.to(device)
@@ -322,16 +351,32 @@ def train_and_infer(args):
             opt.step()
 
             total_loss += loss.item()
+            epoch_losses.append(loss.item())
 
-        avg = total_loss / len(dl)
-        print(f'Epoch {epoch+1} avg_loss: {avg:.6f}')
+        avg_loss = total_loss / len(dl)
+        min_loss = min(epoch_losses)
+        max_loss = max(epoch_losses)
+        
+        # 记录epoch统计
+        training_logger.log_epoch_stats(
+            epoch=epoch + 1,
+            avg_loss=avg_loss,
+            min_loss=min_loss,
+            max_loss=max_loss,
+            total_batches=len(dl)
+        )
+        
+        print(f'Epoch {epoch+1} avg_loss: {avg_loss:.6f}')
 
     save_path = os.path.join(args.out_dir, 'deform_model_final.pth')
     torch.save(model.state_dict(), save_path)
     print(f"Model weights saved to {save_path}")
 
     # --- inference & save PLYs ---
+    training_logger.logger.info("🔄 开始推理阶段，生成PLY文件")
     model.eval()
+    inference_stats = {"bbox_files": 0, "cage_files": 0, "object_files": 0}
+    
     with torch.no_grad():
         for idx in range(len(ds)):
             sensor, gt_def, t_norm = ds[idx]
@@ -341,6 +386,7 @@ def train_and_infer(args):
             raw = ds._load_ply(ds.ply[frame])
             mask = ds._in_box(raw)
             write_ply(os.path.join(bbox_dir, f'crop_{idx:05d}.ply'), raw[mask])
+            inference_stats["bbox_files"] += 1
 
             # predict
             s = sensor.unsqueeze(0).to(device)
@@ -350,13 +396,35 @@ def train_and_infer(args):
             # save deformed cage
             cage_p = ds.cage_coords + d
             write_ply(os.path.join(cages_dir, f'cage_{idx:05d}.ply'), cage_p)
+            inference_stats["cage_files"] += 1
 
             # reconstruct object in world coords
             pred_norm = ds.norm_init + (ds.weights @ d)  # (N_pts,3)
             inv_RS    = np.linalg.inv(ds.rot_scale.numpy())
             world     = pred_norm.dot(inv_RS) - ds.translate.numpy()
             write_ply(os.path.join(objs_dir, f'object_{idx:05d}.ply'), world)
+            inference_stats["object_files"] += 1
 
+    # 记录训练完成
+    training_logger.log_training_complete(
+        model_save_path=save_path,
+        output_directories={
+            "bbox_dir": bbox_dir,
+            "cages_dir": cages_dir,
+            "objects_dir": objs_dir
+        },
+        inference_stats=inference_stats
+    )
+    
+    # 保存性能指标
+    training_logger.save_metrics()
+    
+    # 显示日志摘要
+    log_summary = training_logger.get_log_summary()
+    print("📊 笼节点模型训练日志摘要:")
+    for key, value in log_summary.items():
+        print(f"  {key}: {value}")
+        
     print('Done')
 
 if __name__=='__main__':

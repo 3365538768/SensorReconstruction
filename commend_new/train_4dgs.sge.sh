@@ -98,8 +98,59 @@ python train.py \
 if [ $? -eq 0 ]; then
     echo "✅ 4DGaussians 训练完成"
     echo "训练结束时间: $(date '+%Y-%m-%d %H:%M:%S')"
+    
+    # 备份SGE日志到logs文件夹
+    if [ ! -z "$JOB_ID" ]; then
+        echo "备份SGE日志文件到logs文件夹..."
+        LOG_BACKUP_DIR="logs/sge_jobs/4DGaussians/$ACTION_NAME"
+        mkdir -p "$LOG_BACKUP_DIR"
+        
+        TIMESTAMP=$(date '+%Y%m%d_%H%M%S')
+        
+        # 复制SGE输出和错误日志
+        if [ -f "train_4dgs.o$JOB_ID" ]; then
+            cp "train_4dgs.o$JOB_ID" "$LOG_BACKUP_DIR/sge_output_${TIMESTAMP}.log"
+            echo "✅ SGE输出日志已备份: $LOG_BACKUP_DIR/sge_output_${TIMESTAMP}.log"
+        fi
+        
+        if [ -f "train_4dgs.e$JOB_ID" ]; then
+            cp "train_4dgs.e$JOB_ID" "$LOG_BACKUP_DIR/sge_error_${TIMESTAMP}.log"
+            echo "✅ SGE错误日志已备份: $LOG_BACKUP_DIR/sge_error_${TIMESTAMP}.log"
+        fi
+        
+        # 创建作业信息摘要
+        echo "Creating job summary..."
+        cat > "$LOG_BACKUP_DIR/job_summary_${TIMESTAMP}.txt" << EOF
+SGE作业信息摘要
+================
+作业ID: $JOB_ID
+作业名称: 4DGaussians训练
+实验名称: $ACTION_NAME
+开始时间: $(date '+%Y-%m-%d %H:%M:%S')
+结束时间: $(date '+%Y-%m-%d %H:%M:%S')
+节点信息: $(hostname)
+GPU信息: $(nvidia-smi --query-gpu=name --format=csv,noheader)
+输出目录: output/dnerf/$ACTION_NAME
+日志目录: logs/4DGaussians/$ACTION_NAME
+状态: 训练成功完成
+EOF
+        echo "✅ 作业摘要已创建: $LOG_BACKUP_DIR/job_summary_${TIMESTAMP}.txt"
+    fi
 else
     echo "❌ 训练失败"
+    # 即使失败也备份日志用于调试
+    if [ ! -z "$JOB_ID" ]; then
+        LOG_BACKUP_DIR="logs/sge_jobs/4DGaussians/$ACTION_NAME"
+        mkdir -p "$LOG_BACKUP_DIR"
+        TIMESTAMP=$(date '+%Y%m%d_%H%M%S')
+        
+        if [ -f "train_4dgs.o$JOB_ID" ]; then
+            cp "train_4dgs.o$JOB_ID" "$LOG_BACKUP_DIR/sge_output_failed_${TIMESTAMP}.log"
+        fi
+        if [ -f "train_4dgs.e$JOB_ID" ]; then
+            cp "train_4dgs.e$JOB_ID" "$LOG_BACKUP_DIR/sge_error_failed_${TIMESTAMP}.log"
+        fi
+    fi
     exit 1
 fi
 
