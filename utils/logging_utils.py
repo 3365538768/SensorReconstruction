@@ -9,7 +9,9 @@ import sys
 import json
 import logging
 import datetime
+from pathlib import Path
 from typing import Dict, Any, Optional
+import torch
 from pathlib import Path
 
 class TrainingLogger:
@@ -170,6 +172,29 @@ class TrainingLogger:
         if exception:
             self.logger.error(f"异常详情: {str(exception)}")
             
+    def _convert_tensors_to_python(self, obj):
+        """递归地将PyTorch Tensor和其他不可序列化对象转换为Python原生类型"""
+        if isinstance(obj, torch.Tensor):
+            if obj.numel() == 1:
+                return obj.item()  # 标量Tensor转换为Python数值
+            else:
+                return obj.detach().cpu().tolist()  # 多维Tensor转换为列表
+        elif isinstance(obj, dict):
+            return {k: self._convert_tensors_to_python(v) for k, v in obj.items()}
+        elif isinstance(obj, (list, tuple)):
+            return [self._convert_tensors_to_python(item) for item in obj]
+        elif hasattr(obj, '__dict__'):
+            # 处理自定义对象，转换为字典
+            return {k: self._convert_tensors_to_python(v) for k, v in obj.__dict__.items()}
+        else:
+            # 尝试确保对象是JSON可序列化的
+            try:
+                json.dumps(obj)
+                return obj
+            except (TypeError, ValueError):
+                # 如果不能序列化，转换为字符串表示
+                return str(obj)
+    
     def save_metrics(self):
         """保存性能指标到文件"""
         # 计算总训练时间
@@ -185,10 +210,30 @@ class TrainingLogger:
             
         self.metrics["save_time"] = datetime.datetime.now().isoformat()
         
-        with open(self.metrics_file, 'w', encoding='utf-8') as f:
-            json.dump(self.metrics, f, indent=2, ensure_ascii=False)
+        # 转换所有Tensor和不可序列化对象为JSON兼容格式
+        try:
+            serializable_metrics = self._convert_tensors_to_python(self.metrics)
             
-        self.logger.info(f"性能指标已保存到: {self.metrics_file}")
+            with open(self.metrics_file, 'w', encoding='utf-8') as f:
+                json.dump(serializable_metrics, f, indent=2, ensure_ascii=False)
+                
+            self.logger.info(f"性能指标已保存到: {self.metrics_file}")
+            
+        except Exception as e:
+            self.logger.error(f"保存性能指标时出错: {str(e)}")
+            # 尝试保存基本信息，跳过可能有问题的数据
+            basic_metrics = {
+                "start_time": self.metrics.get("start_time"),
+                "log_type": self.metrics.get("log_type"),
+                "experiment_name": self.metrics.get("experiment_name"),
+                "save_time": datetime.datetime.now().isoformat(),
+                "error": f"部分数据无法序列化: {str(e)}"
+            }
+            
+            with open(self.metrics_file, 'w', encoding='utf-8') as f:
+                json.dump(basic_metrics, f, indent=2, ensure_ascii=False)
+                
+            self.logger.warning(f"已保存基本指标信息到: {self.metrics_file}")
         
     def get_log_summary(self) -> Dict[str, str]:
         """获取日志摘要信息"""

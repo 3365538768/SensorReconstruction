@@ -1,0 +1,20 @@
+{
+  "start_time": "2025-07-30T03:50:25.686645",
+  "log_type": "4DGaussians",
+  "experiment_name": "dnerf/bending",
+  "training_stats": {
+    "start_info": {
+      "start_time": "2025-07-30T03:50:25.689306",
+      "expname": "dnerf/bending",
+      "model_path": "./output/dnerf/bending",
+      "coarse_iterations": 3000,
+      "fine_iterations": 20000
+    },
+    "iterations": [
+      {
+        "iteration": 10,
+        "timestamp": "2025-07-30T03:58:04.884230",
+        "stage": "coarse",
+        "loss": 0.7639446258544922,
+        "ema_loss": 0.7381042892644043,
+        "psnr": 

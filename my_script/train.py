@@ -4,6 +4,7 @@ import json
 import numpy as np
 import pandas as pd
 from plyfile import PlyData, PlyElement
+import sys
 
 import torch
 import torch.nn as nn
@@ -12,6 +13,10 @@ from torch.utils.data import Dataset, DataLoader
 from sklearn.neighbors import KDTree
 from tqdm import tqdm
 from torch_geometric.nn import GraphConv, GATConv
+
+# 添加上级目录到路径以导入utils模块
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from utils.logging_utils import create_training_logger
 
 # =========================================
 # 0. 公共函数: PLY 读写
