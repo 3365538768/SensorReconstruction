@@ -96,7 +96,7 @@ print("→ Exporting frames with export_perframe_3DGS.py …")
 subprocess.run([
     sys.executable,
     os.path.join(root, "export_perframe_3DGS.py"),
-    "--iteration", "100",
+    "--iteration", "20000",
     "--configs", "arguments/dnerf/jumpingjacks.py",
     "--model_path", f"output/dnerf/{exp}"
 ], cwd=root, check=True)
