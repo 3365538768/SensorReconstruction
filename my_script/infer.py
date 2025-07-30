@@ -313,7 +313,32 @@ def inference(args):
         print(f"Error: Model weights not found at {args.model_path}")
         return
     print(f"Loading weights from: {args.model_path}")
-    model.load_state_dict(torch.load(args.model_path, map_location=device))
+    raw_state = torch.load(args.model_path, map_location=device)
+    mapped_state = {}
+    for k, v in raw_state.items():
+        # attention weights
+        if '.att_src' in k:
+            nk = k.replace('.att_src', '.att_l')
+        elif '.att_dst' in k:
+            nk = k.replace('.att_dst', '.att_r')
+        # GAT/GraphConv linear layers
+        elif '.lin_src.weight' in k:
+            nk = k.replace('.lin_src.weight', '.lin_l.weight')
+        elif '.lin_dst.weight' in k:
+            nk = k.replace('.lin_dst.weight', '.lin_r.weight')
+        # conv3 的 rel/root 映射
+        elif '.lin_rel.weight' in k:
+            nk = k.replace('.lin_rel.weight', '.lin_l.weight')
+        elif '.lin_rel.bias' in k:
+            nk = k.replace('.lin_rel.bias', '.lin_l.bias')
+        elif '.lin_root.weight' in k:
+            nk = k.replace('.lin_root.weight', '.lin_r.weight')
+        else:
+            nk = k
+        mapped_state[nk] = v
+
+    # 用 strict=False 跳过仍有差异的键
+    model.load_state_dict(mapped_state, strict=False)
     model.eval()
 
     print("Pre-calculating blending data...")
@@ -379,12 +404,12 @@ def inference(args):
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(description="Deformation Prediction Inference Script")
-    parser.add_argument('--data_dir', type=str, default='experiment2', help='Directory with sensor.csv & region.json')
+    parser.add_argument('--data_dir', type=str, default='test', help='Directory with sensor.csv & region.json')
     parser.add_argument('--init_ply_path', type=str,
-                        default='experiment2/point_cloud.ply', help='Initial PLY path')
+                        default='test/time_00000.ply', help='Initial PLY path')
     parser.add_argument('--model_path', type=str,
-                        default='outputs/experiment1/deform_model_final.pth', help='Model weights path')
-    parser.add_argument('--out_dir', type=str, default='inference_outputs/experiment2', help='Output directory')
+                        default=r'outputs/bend\deform_model_final.pth', help='Model weights path')
+    parser.add_argument('--out_dir', type=str, default='inference_outputs/test', help='Output directory')
     parser.add_argument('--sensor_dim', type=int, default=512, help='Sensor encoding dim')
     parser.add_argument('--cage_res', nargs=3, type=int, default=[15,15,15], help='Cage resolution')
     parser.add_argument('--sensor_res', nargs=2, type=int, default=[10,10], help='Sensor resolution H W')
