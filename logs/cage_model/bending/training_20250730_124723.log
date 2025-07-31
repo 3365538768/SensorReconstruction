@@ -1,0 +1,113 @@
+2025-07-30 12:47:23,476 - cage_model_bending - INFO - 配置已保存到: logs/cage_model/bending/config_20250730_124723.json
+2025-07-30 12:47:25,878 - cage_model_bending - INFO - 🚀 cage_model 训练开始
+2025-07-30 12:47:25,878 - cage_model_bending - INFO - 实验名称: bending
+2025-07-30 12:47:25,878 - cage_model_bending - INFO - dataset_size: 67
+2025-07-30 12:47:25,878 - cage_model_bending - INFO - batch_size: 4
+2025-07-30 12:47:25,878 - cage_model_bending - INFO - total_epochs: 100
+2025-07-30 12:47:25,878 - cage_model_bending - INFO - model_parameters: 2650755
+2025-07-30 12:47:28,490 - cage_model_bending - INFO - Epoch 1 - avg_loss: 0.022560334593221983, min_loss: 0.0017298248130828142, max_loss: 0.22575469315052032, total_batches: 17
+2025-07-30 12:47:30,026 - cage_model_bending - INFO - Epoch 2 - avg_loss: 0.0015110854497727227, min_loss: 0.0007195558864623308, max_loss: 0.0021902467124164104, total_batches: 17
+2025-07-30 12:47:31,693 - cage_model_bending - INFO - Epoch 3 - avg_loss: 0.0010731462594669532, min_loss: 0.000589873525314033, max_loss: 0.0016720503335818648, total_batches: 17
+2025-07-30 12:47:33,289 - cage_model_bending - INFO - Epoch 4 - avg_loss: 0.0009441642494707861, min_loss: 0.0005441766697913408, max_loss: 0.001399916596710682, total_batches: 17
+2025-07-30 12:47:34,887 - cage_model_bending - INFO - Epoch 5 - avg_loss: 0.0008833059075507609, min_loss: 0.0003217204939574003, max_loss: 0.0013270501513034105, total_batches: 17
+2025-07-30 12:47:36,453 - cage_model_bending - INFO - Epoch 6 - avg_loss: 0.0008458470316220294, min_loss: 0.00041131116449832916, max_loss: 0.0013850354589521885, total_batches: 17
+2025-07-30 12:47:38,075 - cage_model_bending - INFO - Epoch 7 - avg_loss: 0.0008505417431211647, min_loss: 0.0003320689720567316, max_loss: 0.001260662917047739, total_batches: 17
+2025-07-30 12:47:39,665 - cage_model_bending - INFO - Epoch 8 - avg_loss: 0.0007746190017582301, min_loss: 0.0004075714969076216, max_loss: 0.0011485423892736435, total_batches: 17
+2025-07-30 12:47:41,189 - cage_model_bending - INFO - Epoch 9 - avg_loss: 0.0007602330314351575, min_loss: 0.0001989901065826416, max_loss: 0.0013460393529385328, total_batches: 17
+2025-07-30 12:47:42,780 - cage_model_bending - INFO - Epoch 10 - avg_loss: 0.0007139599902610131, min_loss: 0.00044685392640531063, max_loss: 0.0009391837520524859, total_batches: 17
+2025-07-30 12:47:44,317 - cage_model_bending - INFO - Epoch 11 - avg_loss: 0.0007060768428559908, min_loss: 0.000344075117027387, max_loss: 0.0009485483169555664, total_batches: 17
+2025-07-30 12:47:45,840 - cage_model_bending - INFO - Epoch 12 - avg_loss: 0.0006904986118623877, min_loss: 0.0003183666558470577, max_loss: 0.001089889439754188, total_batches: 17
+2025-07-30 12:47:47,462 - cage_model_bending - INFO - Epoch 13 - avg_loss: 0.0006966042616541552, min_loss: 0.0002726158418226987, max_loss: 0.0009618605836294591, total_batches: 17
+2025-07-30 12:47:49,006 - cage_model_bending - INFO - Epoch 14 - avg_loss: 0.0006798970947891255, min_loss: 0.00044576774234883487, max_loss: 0.0010155804920941591, total_batches: 17
+2025-07-30 12:47:50,600 - cage_model_bending - INFO - Epoch 15 - avg_loss: 0.0006867889931206318, min_loss: 0.00029673497192561626, max_loss: 0.0009072840912267566, total_batches: 17
+2025-07-30 12:47:52,127 - cage_model_bending - INFO - Epoch 16 - avg_loss: 0.0006850025298156063, min_loss: 0.0003402844595257193, max_loss: 0.0010123072424903512, total_batches: 17
+2025-07-30 12:47:53,744 - cage_model_bending - INFO - Epoch 17 - avg_loss: 0.000680472470669295, min_loss: 0.0004072317969985306, max_loss: 0.0010560142109170556, total_batches: 17
+2025-07-30 12:47:55,276 - cage_model_bending - INFO - Epoch 18 - avg_loss: 0.00071104899261092, min_loss: 0.0004176681686658412, max_loss: 0.0011119988048449159, total_batches: 17
+2025-07-30 12:47:56,826 - cage_model_bending - INFO - Epoch 19 - avg_loss: 0.0007613899480715833, min_loss: 0.00039869884494692087, max_loss: 0.0010344126494601369, total_batches: 17
+2025-07-30 12:47:58,349 - cage_model_bending - INFO - Epoch 20 - avg_loss: 0.000667631345362786, min_loss: 0.0003890511579811573, max_loss: 0.001140310661867261, total_batches: 17
+2025-07-30 12:47:59,943 - cage_model_bending - INFO - Epoch 21 - avg_loss: 0.000638795131475062, min_loss: 0.00029269963852129877, max_loss: 0.000869943352881819, total_batches: 17
+2025-07-30 12:48:01,472 - cage_model_bending - INFO - Epoch 22 - avg_loss: 0.0006355548325433012, min_loss: 0.00034205755218863487, max_loss: 0.0009209304698742926, total_batches: 17
+2025-07-30 12:48:03,069 - cage_model_bending - INFO - Epoch 23 - avg_loss: 0.000628460811533253, min_loss: 0.00025680428370833397, max_loss: 0.0009313180344179273, total_batches: 17
+2025-07-30 12:48:04,666 - cage_model_bending - INFO - Epoch 24 - avg_loss: 0.0006183864880928441, min_loss: 0.00040051009273156524, max_loss: 0.0008920697146095335, total_batches: 17
+2025-07-30 12:48:06,263 - cage_model_bending - INFO - Epoch 25 - avg_loss: 0.0006139778569751583, min_loss: 0.0003600744530558586, max_loss: 0.000975040951743722, total_batches: 17
+2025-07-30 12:48:07,865 - cage_model_bending - INFO - Epoch 26 - avg_loss: 0.0006074915016891764, min_loss: 0.0002851718454621732, max_loss: 0.0009108950616791844, total_batches: 17
+2025-07-30 12:48:09,398 - cage_model_bending - INFO - Epoch 27 - avg_loss: 0.0006226318159058471, min_loss: 0.00040222096140496433, max_loss: 0.0008087452733889222, total_batches: 17
+2025-07-30 12:48:10,927 - cage_model_bending - INFO - Epoch 28 - avg_loss: 0.0005967603219152592, min_loss: 0.000323897460475564, max_loss: 0.0008928087772801518, total_batches: 17
+2025-07-30 12:48:12,496 - cage_model_bending - INFO - Epoch 29 - avg_loss: 0.000614465146260473, min_loss: 7.17742441338487e-05, max_loss: 0.0009289836161769927, total_batches: 17
+2025-07-30 12:48:14,138 - cage_model_bending - INFO - Epoch 30 - avg_loss: 0.0006230229439953452, min_loss: 0.0004024333320558071, max_loss: 0.0008839324582368135, total_batches: 17
+2025-07-30 12:48:15,741 - cage_model_bending - INFO - Epoch 31 - avg_loss: 0.0006035187637762112, min_loss: 0.0003411713114473969, max_loss: 0.0008604555623605847, total_batches: 17
+2025-07-30 12:48:17,337 - cage_model_bending - INFO - Epoch 32 - avg_loss: 0.0005974795409094761, min_loss: 0.00031609609141014516, max_loss: 0.0009790156036615372, total_batches: 17
+2025-07-30 12:48:18,867 - cage_model_bending - INFO - Epoch 33 - avg_loss: 0.0005964400924687438, min_loss: 0.0002801922964863479, max_loss: 0.000949480221606791, total_batches: 17
+2025-07-30 12:48:20,483 - cage_model_bending - INFO - Epoch 34 - avg_loss: 0.0005783347279408618, min_loss: 0.00027356992359273136, max_loss: 0.0008714408613741398, total_batches: 17
+2025-07-30 12:48:22,082 - cage_model_bending - INFO - Epoch 35 - avg_loss: 0.0006359036813270958, min_loss: 0.00024358276277780533, max_loss: 0.0009638462215662003, total_batches: 17
+2025-07-30 12:48:23,637 - cage_model_bending - INFO - Epoch 36 - avg_loss: 0.0005928335612064556, min_loss: 0.0003219311183784157, max_loss: 0.0009545949869789183, total_batches: 17
+2025-07-30 12:48:25,172 - cage_model_bending - INFO - Epoch 37 - avg_loss: 0.0005700794503996696, min_loss: 0.0003125092189293355, max_loss: 0.0008384116808883846, total_batches: 17
+2025-07-30 12:48:26,777 - cage_model_bending - INFO - Epoch 38 - avg_loss: 0.0005623083921176765, min_loss: 0.00030593451811000705, max_loss: 0.0008076154044829309, total_batches: 17
+2025-07-30 12:48:28,318 - cage_model_bending - INFO - Epoch 39 - avg_loss: 0.00057139723417897, min_loss: 0.00026774831349030137, max_loss: 0.0007969969883561134, total_batches: 17
+2025-07-30 12:48:29,848 - cage_model_bending - INFO - Epoch 40 - avg_loss: 0.0005545300090863533, min_loss: 0.000226014424697496, max_loss: 0.000737228081561625, total_batches: 17
+2025-07-30 12:48:31,399 - cage_model_bending - INFO - Epoch 41 - avg_loss: 0.0005564170903252328, min_loss: 0.0002922096464317292, max_loss: 0.0008340557687915862, total_batches: 17
+2025-07-30 12:48:32,995 - cage_model_bending - INFO - Epoch 42 - avg_loss: 0.0005786589463241398, min_loss: 0.00028114684391766787, max_loss: 0.0008556762477383018, total_batches: 17
+2025-07-30 12:48:34,587 - cage_model_bending - INFO - Epoch 43 - avg_loss: 0.0005991371684050297, min_loss: 0.0003752053889911622, max_loss: 0.0008653726545162499, total_batches: 17
+2025-07-30 12:48:36,185 - cage_model_bending - INFO - Epoch 44 - avg_loss: 0.000640434433829368, min_loss: 0.00032005985849536955, max_loss: 0.0010562841780483723, total_batches: 17
+2025-07-30 12:48:37,790 - cage_model_bending - INFO - Epoch 45 - avg_loss: 0.0005882423960001153, min_loss: 0.0003132962738163769, max_loss: 0.0009337874944321811, total_batches: 17
+2025-07-30 12:48:39,394 - cage_model_bending - INFO - Epoch 46 - avg_loss: 0.0005549834048211136, min_loss: 0.0003003436140716076, max_loss: 0.0007932049920782447, total_batches: 17
+2025-07-30 12:48:40,996 - cage_model_bending - INFO - Epoch 47 - avg_loss: 0.0005432197444058736, min_loss: 0.0003421011206228286, max_loss: 0.0008462440455332398, total_batches: 17
+2025-07-30 12:48:42,600 - cage_model_bending - INFO - Epoch 48 - avg_loss: 0.0005394309016136343, min_loss: 0.0002879436651710421, max_loss: 0.0008089240873232484, total_batches: 17
+2025-07-30 12:48:44,164 - cage_model_bending - INFO - Epoch 49 - avg_loss: 0.0005451989495400887, min_loss: 0.00015914429968688637, max_loss: 0.0008246934157796204, total_batches: 17
+2025-07-30 12:48:45,714 - cage_model_bending - INFO - Epoch 50 - avg_loss: 0.0005422715056578026, min_loss: 0.0002301717468071729, max_loss: 0.0008921093540266156, total_batches: 17
+2025-07-30 12:48:47,348 - cage_model_bending - INFO - Epoch 51 - avg_loss: 0.0005374086356502684, min_loss: 0.00038649330963380635, max_loss: 0.0007112110615707934, total_batches: 17
+2025-07-30 12:48:48,961 - cage_model_bending - INFO - Epoch 52 - avg_loss: 0.0005401270173024386, min_loss: 0.0003139262262266129, max_loss: 0.0007383298361673951, total_batches: 17
+2025-07-30 12:48:50,570 - cage_model_bending - INFO - Epoch 53 - avg_loss: 0.0005559375756146276, min_loss: 0.000388774904422462, max_loss: 0.0008325304370373487, total_batches: 17
+2025-07-30 12:48:52,171 - cage_model_bending - INFO - Epoch 54 - avg_loss: 0.0005395966992877862, min_loss: 0.0002465651195961982, max_loss: 0.0007683293661102653, total_batches: 17
+2025-07-30 12:48:53,780 - cage_model_bending - INFO - Epoch 55 - avg_loss: 0.0005708897421273458, min_loss: 0.00024651482817716897, max_loss: 0.0007941086660139263, total_batches: 17
+2025-07-30 12:48:55,380 - cage_model_bending - INFO - Epoch 56 - avg_loss: 0.0005610983353108168, min_loss: 0.0003205696993973106, max_loss: 0.0007404150092042983, total_batches: 17
+2025-07-30 12:48:56,979 - cage_model_bending - INFO - Epoch 57 - avg_loss: 0.0005439258170286741, min_loss: 0.0002917087695095688, max_loss: 0.0007749269716441631, total_batches: 17
+2025-07-30 12:48:58,505 - cage_model_bending - INFO - Epoch 58 - avg_loss: 0.0005407001487636829, min_loss: 0.0002794117317534983, max_loss: 0.0007721807342022657, total_batches: 17
+2025-07-30 12:49:00,048 - cage_model_bending - INFO - Epoch 59 - avg_loss: 0.0005323454970493913, min_loss: 0.00026408032863400877, max_loss: 0.0007577695650979877, total_batches: 17
+2025-07-30 12:49:01,652 - cage_model_bending - INFO - Epoch 60 - avg_loss: 0.0005226921468206189, min_loss: 0.00027733593015000224, max_loss: 0.0007352688699029386, total_batches: 17
+2025-07-30 12:49:03,192 - cage_model_bending - INFO - Epoch 61 - avg_loss: 0.0005251177473623744, min_loss: 0.00027621950721368194, max_loss: 0.0008283143979497254, total_batches: 17
+2025-07-30 12:49:04,715 - cage_model_bending - INFO - Epoch 62 - avg_loss: 0.0005382162036018117, min_loss: 0.00027746480191126466, max_loss: 0.000775134947616607, total_batches: 17
+2025-07-30 12:49:06,241 - cage_model_bending - INFO - Epoch 63 - avg_loss: 0.0005314451392383917, min_loss: 0.00034734109067358077, max_loss: 0.0007756943232379854, total_batches: 17
+2025-07-30 12:49:07,830 - cage_model_bending - INFO - Epoch 64 - avg_loss: 0.0005253146827111349, min_loss: 0.0003234015894122422, max_loss: 0.0007551067392341793, total_batches: 17
+2025-07-30 12:49:09,433 - cage_model_bending - INFO - Epoch 65 - avg_loss: 0.0005229480328339645, min_loss: 0.00016249297186732292, max_loss: 0.0007602897239848971, total_batches: 17
+2025-07-30 12:49:11,032 - cage_model_bending - INFO - Epoch 66 - avg_loss: 0.000525636737139019, min_loss: 0.0003597534087020904, max_loss: 0.0007296215044334531, total_batches: 17
+2025-07-30 12:49:12,558 - cage_model_bending - INFO - Epoch 67 - avg_loss: 0.0005450826497775886, min_loss: 0.0003484197659417987, max_loss: 0.0006883741589263082, total_batches: 17
+2025-07-30 12:49:14,085 - cage_model_bending - INFO - Epoch 68 - avg_loss: 0.000540172023808255, min_loss: 0.0003000304277520627, max_loss: 0.0008354541496373713, total_batches: 17
+2025-07-30 12:49:15,615 - cage_model_bending - INFO - Epoch 69 - avg_loss: 0.0005585448756498997, min_loss: 0.00020616666006390005, max_loss: 0.0009385694866068661, total_batches: 17
+2025-07-30 12:49:17,281 - cage_model_bending - INFO - Epoch 70 - avg_loss: 0.0005189788130605046, min_loss: 0.0003325997095089406, max_loss: 0.0007609767490066588, total_batches: 17
+2025-07-30 12:49:18,805 - cage_model_bending - INFO - Epoch 71 - avg_loss: 0.0005182579454198918, min_loss: 0.0003435160033404827, max_loss: 0.000747586484067142, total_batches: 17
+2025-07-30 12:49:20,419 - cage_model_bending - INFO - Epoch 72 - avg_loss: 0.0005078048476100187, min_loss: 0.0003413640079088509, max_loss: 0.0007195089128799736, total_batches: 17
+2025-07-30 12:49:22,022 - cage_model_bending - INFO - Epoch 73 - avg_loss: 0.0005051040746312698, min_loss: 0.00020244855841156095, max_loss: 0.000748993013985455, total_batches: 17
+2025-07-30 12:49:23,626 - cage_model_bending - INFO - Epoch 74 - avg_loss: 0.000503223719801206, min_loss: 0.0003277488867752254, max_loss: 0.0007292883237823844, total_batches: 17
+2025-07-30 12:49:25,162 - cage_model_bending - INFO - Epoch 75 - avg_loss: 0.0005101209817974664, min_loss: 0.0002986331528518349, max_loss: 0.0006730546592734754, total_batches: 17
+2025-07-30 12:49:26,768 - cage_model_bending - INFO - Epoch 76 - avg_loss: 0.0005086690413436907, min_loss: 0.00026691940729506314, max_loss: 0.0008113186340779066, total_batches: 17
+2025-07-30 12:49:28,310 - cage_model_bending - INFO - Epoch 77 - avg_loss: 0.0005147007023504771, min_loss: 0.0002654685522429645, max_loss: 0.0007361462921835482, total_batches: 17
+2025-07-30 12:49:29,981 - cage_model_bending - INFO - Epoch 78 - avg_loss: 0.0005152212740059066, min_loss: 0.0003231967275496572, max_loss: 0.0006949402741156518, total_batches: 17
+2025-07-30 12:49:31,590 - cage_model_bending - INFO - Epoch 79 - avg_loss: 0.0005094652981771266, min_loss: 0.0003036083944607526, max_loss: 0.000847570423502475, total_batches: 17
+2025-07-30 12:49:33,117 - cage_model_bending - INFO - Epoch 80 - avg_loss: 0.0005077186797279865, min_loss: 0.0003214900498278439, max_loss: 0.0008197896531783044, total_batches: 17
+2025-07-30 12:49:34,686 - cage_model_bending - INFO - Epoch 81 - avg_loss: 0.0005166972867514499, min_loss: 0.00022954445739742368, max_loss: 0.0007965594413690269, total_batches: 17
+2025-07-30 12:49:36,244 - cage_model_bending - INFO - Epoch 82 - avg_loss: 0.0005145772216458092, min_loss: 0.00023480865638703108, max_loss: 0.000663030135910958, total_batches: 17
+2025-07-30 12:49:37,781 - cage_model_bending - INFO - Epoch 83 - avg_loss: 0.0005121058715945657, min_loss: 0.00027664017397910357, max_loss: 0.0006811455823481083, total_batches: 17
+2025-07-30 12:49:39,309 - cage_model_bending - INFO - Epoch 84 - avg_loss: 0.0005051578833338092, min_loss: 0.0002759442140813917, max_loss: 0.0007340562879107893, total_batches: 17
+2025-07-30 12:49:40,839 - cage_model_bending - INFO - Epoch 85 - avg_loss: 0.0004958059101173764, min_loss: 0.0001787679793778807, max_loss: 0.0006895579281263053, total_batches: 17
+2025-07-30 12:49:42,443 - cage_model_bending - INFO - Epoch 86 - avg_loss: 0.0004919347462846953, min_loss: 0.00015130831161513925, max_loss: 0.0007501196814700961, total_batches: 17
+2025-07-30 12:49:44,042 - cage_model_bending - INFO - Epoch 87 - avg_loss: 0.000494580646559103, min_loss: 0.0001854166475823149, max_loss: 0.0007509827264584601, total_batches: 17
+2025-07-30 12:49:45,578 - cage_model_bending - INFO - Epoch 88 - avg_loss: 0.0004986872937639846, min_loss: 0.0003146067901980132, max_loss: 0.0007832865812815726, total_batches: 17
+2025-07-30 12:49:47,106 - cage_model_bending - INFO - Epoch 89 - avg_loss: 0.0005047949910958243, min_loss: 0.0003168557886965573, max_loss: 0.000725768506526947, total_batches: 17
+2025-07-30 12:49:48,700 - cage_model_bending - INFO - Epoch 90 - avg_loss: 0.0004973669925033499, min_loss: 0.00023146970488596708, max_loss: 0.0007213010685518384, total_batches: 17
+2025-07-30 12:49:50,228 - cage_model_bending - INFO - Epoch 91 - avg_loss: 0.0005144651051309398, min_loss: 0.00021902684238739312, max_loss: 0.000836603925563395, total_batches: 17
+2025-07-30 12:49:51,782 - cage_model_bending - INFO - Epoch 92 - avg_loss: 0.00053883355747744, min_loss: 0.00033523421734571457, max_loss: 0.0007793180411681533, total_batches: 17
+2025-07-30 12:49:53,347 - cage_model_bending - INFO - Epoch 93 - avg_loss: 0.0005760754215503659, min_loss: 0.00028514457517303526, max_loss: 0.0009793911594897509, total_batches: 17
+2025-07-30 12:49:54,979 - cage_model_bending - INFO - Epoch 94 - avg_loss: 0.0005451069377800997, min_loss: 0.00035189586924389005, max_loss: 0.0007731126388534904, total_batches: 17
+2025-07-30 12:49:56,580 - cage_model_bending - INFO - Epoch 95 - avg_loss: 0.0005131405821028987, min_loss: 0.00016849943494889885, max_loss: 0.00082284992095083, total_batches: 17
+2025-07-30 12:49:58,124 - cage_model_bending - INFO - Epoch 96 - avg_loss: 0.0005020319213679828, min_loss: 0.0002510346530470997, max_loss: 0.0007905772072263062, total_batches: 17
+2025-07-30 12:49:59,711 - cage_model_bending - INFO - Epoch 97 - avg_loss: 0.0004956011937739437, min_loss: 0.00028158011264167726, max_loss: 0.000693922454956919, total_batches: 17
+2025-07-30 12:50:01,260 - cage_model_bending - INFO - Epoch 98 - avg_loss: 0.0004896567209952456, min_loss: 0.0002746285463217646, max_loss: 0.0006816299282945693, total_batches: 17
+2025-07-30 12:50:02,876 - cage_model_bending - INFO - Epoch 99 - avg_loss: 0.00048522456884658076, min_loss: 0.00028844785992987454, max_loss: 0.0007045968668535352, total_batches: 17
+2025-07-30 12:50:04,482 - cage_model_bending - INFO - Epoch 100 - avg_loss: 0.0004945095758611226, min_loss: 0.000292730430373922, max_loss: 0.0006386084714904428, total_batches: 17
+2025-07-30 12:50:04,513 - cage_model_bending - INFO - 🔄 开始推理阶段，生成PLY文件
+2025-07-30 12:51:04,552 - cage_model_bending - INFO - ✅ cage_model 训练完成
+2025-07-30 12:51:04,552 - cage_model_bending - INFO - model_save_path: outputs/bending/deform_model_final.pth
+2025-07-30 12:51:04,552 - cage_model_bending - INFO - output_directories: {'bbox_dir': 'outputs/bending/cropped_bbox', 'cages_dir': 'outputs/bending/cages_pred', 'objects_dir': 'outputs/bending/objects_world'}
+2025-07-30 12:51:04,552 - cage_model_bending - INFO - inference_stats: {'bbox_files': 67, 'cage_files': 67, 'object_files': 67}
+2025-07-30 12:51:04,557 - cage_model_bending - INFO - 性能指标已保存到: logs/cage_model/bending/metrics_20250730_124723.json

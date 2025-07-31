@@ -110,7 +110,7 @@ subprocess.run([
     "get_movepoint.py",
     "--input_dir", os.path.join(root, "output", "dnerf", exp, "gaussian_pertimestamp"),
     "--output_dir", frames_dir,
-    "--percent", "0.2"
+    "--percent", "0.8"
 ], cwd=os.path.join(root, "my_script"), check=True)
 
 print("→ All steps completed! Waiting for sensor.csv and region.json")

@@ -14,9 +14,36 @@ from sklearn.neighbors import KDTree
 from tqdm import tqdm
 from torch_geometric.nn import GraphConv, GATConv
 
-# 添加上级目录到路径以导入utils模块
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from utils.logging_utils import create_training_logger
+# 添加项目根目录到路径以导入utils模块
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.dirname(current_dir)
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+
+# 导入日志工具
+try:
+    from utils.logging_utils import TrainingLogger
+except ImportError as e:
+    print(f"Warning: Could not import logging utils: {e}")
+    print(f"Current directory: {os.getcwd()}")
+    print(f"Project root: {project_root}")
+    print(f"sys.path: {sys.path[:3]}...")
+    # 如果导入失败，创建一个简单的替代函数
+    class TrainingLogger:
+        def __init__(self, log_type, experiment_name, log_dir=None):
+            pass
+        def log_config(self, config): pass
+        def log_training_start(self, **kwargs): pass
+        def log_epoch_stats(self, **kwargs): pass
+        def log_training_complete(self, **kwargs): pass
+        def save_metrics(self): pass
+        logger = type('Logger', (), {'info': lambda x: print(f"INFO: {x}")})()
+
+def create_training_logger(log_type, experiment_name):
+    """创建使用项目根目录logs的训练日志记录器"""
+    # 计算项目根目录的logs路径
+    project_logs_dir = os.path.join(project_root, "logs")
+    return TrainingLogger(log_type, experiment_name, log_dir=project_logs_dir)
 
 # =========================================
 # 0. 公共函数: PLY 读写

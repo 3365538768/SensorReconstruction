@@ -1,0 +1,7 @@
+2025-07-31 02:00:26,736 - cage_model_bending - INFO - 配置已保存到: /users/zchen27/SensorReconstruction/logs/cage_model/bending/config_20250731_020026.json
+2025-07-31 02:00:27,793 - cage_model_bending - INFO - 🚀 cage_model 训练开始
+2025-07-31 02:00:27,793 - cage_model_bending - INFO - 实验名称: bending
+2025-07-31 02:00:27,793 - cage_model_bending - INFO - dataset_size: 258
+2025-07-31 02:00:27,793 - cage_model_bending - INFO - batch_size: 4
+2025-07-31 02:00:27,793 - cage_model_bending - INFO - total_epochs: 100
+2025-07-31 02:00:27,793 - cage_model_bending - INFO - model_parameters: 2650755
