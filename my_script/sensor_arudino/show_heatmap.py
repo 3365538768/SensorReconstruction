@@ -146,55 +146,136 @@ class App:
         self.root = root
         root.title("Sensor 3D Pressure Monitor")
         
+        # Set window size optimized for small screens
+        window_width = 1000
+        window_height = 650
+        
+        # Get screen dimensions
+        screen_width = root.winfo_screenwidth()
+        screen_height = root.winfo_screenheight()
+        
+        # Adjust window size if screen is too small
+        if screen_width < 1200:
+            window_width = min(900, screen_width - 100)
+        if screen_height < 800:
+            window_height = min(600, screen_height - 100)
+            
+        # Center window on screen
+        x = (screen_width - window_width) // 2
+        y = (screen_height - window_height) // 2
+        
+        root.geometry(f"{window_width}x{window_height}+{x}+{y}")
+        root.minsize(800, 500)  # Minimum size for usability
+        
         # Configure grid weights for responsive layout
         root.grid_rowconfigure(0, weight=1)
         root.grid_columnconfigure(0, weight=3)  # Give more weight to plot area
         root.grid_columnconfigure(1, weight=1)  # Less weight to control panel
 
-        # Create 3D matplotlib figure with fixed size
-        self.fig = plt.figure(figsize=(10, 8))
+        # Create 3D matplotlib figure optimized for small screens
+        self.fig = plt.figure(figsize=(8, 6))
         self.ax = self.fig.add_subplot(111, projection='3d')
         
         # Set tight layout to prevent overlap
-        self.fig.tight_layout()
+        self.fig.tight_layout(pad=1.0)
         
         # Place canvas on the left side
         self.canvas = FigureCanvasTkAgg(self.fig, master=root)
         self.canvas.get_tk_widget().grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
 
-        # Right side control panel
-        control_frame = tk.Frame(root, width=200)
-        control_frame.grid(row=0, column=1, sticky="ns", padx=5, pady=5)
+        # Right side control panel with enhanced design
+        control_frame = tk.Frame(root, width=220, bg="#f0f0f0", relief=tk.RIDGE, bd=2)
+        control_frame.grid(row=0, column=1, sticky="ns", padx=8, pady=8)
         control_frame.grid_propagate(False)  # Fixed control panel width
 
-        # Add title label
-        title_label = tk.Label(control_frame, text="Control Panel", font=("Arial", 12, "bold"))
-        title_label.pack(pady=(10, 20))
+        # Add title label with improved styling
+        title_label = tk.Label(control_frame, text="🎛️ Control Panel", 
+                             font=("Arial", 14, "bold"), bg="#f0f0f0", fg="#333333")
+        title_label.pack(pady=(15, 20))
 
-        # Save Frame button
-        btn_save = tk.Button(control_frame, text="Save Current Frame", command=self.save_frame, 
-                           width=15, height=2, bg="#4CAF50", fg="white")
-        btn_save.pack(pady=10)
+        # Buttons container with better spacing
+        btn_frame = tk.Frame(control_frame, bg="#f0f0f0")
+        btn_frame.pack(pady=5)
         
-        # Export CSV button
-        btn_exp = tk.Button(control_frame, text="Export CSV", command=self.export_csv,
-                          width=15, height=2, bg="#2196F3", fg="white")
-        btn_exp.pack(pady=10)
+        # Save Frame button with enhanced styling
+        btn_save = tk.Button(btn_frame, text="💾 Save Frame", command=self.save_frame, 
+                           width=18, height=2, bg="#4CAF50", fg="white", 
+                           font=("Arial", 10, "bold"), relief=tk.RAISED, bd=3)
+        btn_save.pack(pady=8)
+        
+        # Export CSV button with enhanced styling
+        btn_exp = tk.Button(btn_frame, text="📊 Export CSV", command=self.export_csv,
+                          width=18, height=2, bg="#2196F3", fg="white",
+                          font=("Arial", 10, "bold"), relief=tk.RAISED, bd=3)
+        btn_exp.pack(pady=8)
 
-        # Status information label
-        self.status_label = tk.Label(control_frame, text="Status: Running", 
-                                   font=("Arial", 10), wraplength=180)
-        self.status_label.pack(pady=(20, 10))
+        # Mode switch button with enhanced styling
+        self.mode_btn = tk.Button(btn_frame, text="🔄 Switch to 2D", command=self.toggle_display_mode,
+                           width=18, height=2, bg="#FF9800", fg="white",
+                           font=("Arial", 10, "bold"), relief=tk.RAISED, bd=3)
+        self.mode_btn.pack(pady=8)
 
-        # Data statistics label
-        self.stats_label = tk.Label(control_frame, text="", 
-                                  font=("Arial", 9), wraplength=180, justify="left")
-        self.stats_label.pack(pady=10)
+        # Separator line
+        separator = tk.Frame(control_frame, height=2, bg="#cccccc")
+        separator.pack(fill=tk.X, padx=20, pady=(10, 15))
 
-        # Add mode switch button
-        self.mode_btn = tk.Button(control_frame, text="Switch to 2D Mode", command=self.toggle_display_mode,
-                           width=15, height=1, bg="#FF9800", fg="white")
-        self.mode_btn.pack(pady=5)
+        # Status information with enhanced styling
+        status_frame = tk.Frame(control_frame, bg="#f0f0f0")
+        status_frame.pack(pady=5, padx=10, fill=tk.X)
+        
+        status_title = tk.Label(status_frame, text="📡 System Status", 
+                              font=("Arial", 11, "bold"), bg="#f0f0f0", fg="#333333")
+        status_title.pack(anchor=tk.W)
+        
+        self.status_label = tk.Label(status_frame, text="Status: Running", 
+                                   font=("Arial", 9), bg="#f0f0f0", fg="#666666",
+                                   wraplength=180, justify=tk.LEFT)
+        self.status_label.pack(anchor=tk.W, pady=(5, 10))
+
+        # Data statistics with enhanced styling
+        stats_frame = tk.Frame(control_frame, bg="#f0f0f0")
+        stats_frame.pack(pady=5, padx=10, fill=tk.X)
+        
+        stats_title = tk.Label(stats_frame, text="📈 Data Statistics", 
+                             font=("Arial", 11, "bold"), bg="#f0f0f0", fg="#333333")
+        stats_title.pack(anchor=tk.W)
+        
+        self.stats_label = tk.Label(stats_frame, text="", 
+                                  font=("Arial", 9), bg="#f0f0f0", fg="#666666",
+                                  wraplength=180, justify=tk.LEFT)
+        self.stats_label.pack(anchor=tk.W, pady=(5, 0))
+        
+        # View angle controls (only for 3D mode)
+        view_frame = tk.Frame(control_frame, bg="#f0f0f0")
+        view_frame.pack(pady=10, padx=10, fill=tk.X)
+        
+        view_title = tk.Label(view_frame, text="👁️ View Controls", 
+                            font=("Arial", 11, "bold"), bg="#f0f0f0", fg="#333333")
+        view_title.pack(anchor=tk.W)
+        
+        # View angle buttons
+        view_btn_frame = tk.Frame(view_frame, bg="#f0f0f0")
+        view_btn_frame.pack(pady=5)
+        
+        btn_top = tk.Button(view_btn_frame, text="⬆️ Top", command=lambda: self.adjust_view("top"),
+                          width=8, height=1, bg="#9C27B0", fg="white", font=("Arial", 8))
+        btn_top.grid(row=0, column=1, padx=2, pady=2)
+        
+        btn_left = tk.Button(view_btn_frame, text="⬅️ Left", command=lambda: self.adjust_view("left"),
+                           width=8, height=1, bg="#9C27B0", fg="white", font=("Arial", 8))
+        btn_left.grid(row=1, column=0, padx=2, pady=2)
+        
+        btn_reset = tk.Button(view_btn_frame, text="🎯 Reset", command=lambda: self.adjust_view("reset"),
+                            width=8, height=1, bg="#795548", fg="white", font=("Arial", 8))
+        btn_reset.grid(row=1, column=1, padx=2, pady=2)
+        
+        btn_right = tk.Button(view_btn_frame, text="➡️ Right", command=lambda: self.adjust_view("right"),
+                            width=8, height=1, bg="#9C27B0", fg="white", font=("Arial", 8))
+        btn_right.grid(row=1, column=2, padx=2, pady=2)
+        
+        btn_bottom = tk.Button(view_btn_frame, text="⬇️ Bottom", command=lambda: self.adjust_view("bottom"),
+                             width=8, height=1, bg="#9C27B0", fg="white", font=("Arial", 8))
+        btn_bottom.grid(row=2, column=1, padx=2, pady=2)
         
         # Initialize display mode
         self.display_mode_3d = True
@@ -203,6 +284,8 @@ class App:
         self.heatmap_im = None
         
         # Initialize plot
+        self.current_elev = 35  # Store current elevation angle
+        self.current_azim = 135  # Store current azimuth angle
         self.setup_plot()
         self.last_update_time = 0
         self.update_plot()
@@ -219,12 +302,38 @@ class App:
         # Setup new plot mode
         self.setup_plot()
         
-        # Update button text
-        mode_text = "Switch to 2D Mode" if self.display_mode_3d else "Switch to 3D Mode"
+        # Update button text with emoji
+        mode_text = "🔄 Switch to 2D" if self.display_mode_3d else "🔄 Switch to 3D"
         self.mode_btn.config(text=mode_text)
         
         # Force canvas update
         self.canvas.draw()
+
+    def adjust_view(self, direction):
+        """Adjust 3D view angle"""
+        if not self.display_mode_3d:
+            return  # Only works in 3D mode
+            
+        if direction == "left":
+            self.current_azim -= 15
+        elif direction == "right":
+            self.current_azim += 15
+        elif direction == "top":
+            self.current_elev += 10
+        elif direction == "bottom":
+            self.current_elev -= 10
+        elif direction == "reset":
+            self.current_elev = 35
+            self.current_azim = 135
+            
+        # Constrain angles to reasonable ranges
+        self.current_elev = max(5, min(85, self.current_elev))
+        self.current_azim = self.current_azim % 360
+        
+        # Update the view
+        if hasattr(self, 'ax') and self.ax:
+            self.ax.view_init(elev=self.current_elev, azim=self.current_azim)
+            self.canvas.draw_idle()
 
     def setup_plot(self):
         """Setup plot based on current display mode"""
@@ -287,13 +396,27 @@ class App:
         self.ax.set_zlabel('Normalized Pressure', fontsize=10)
         self.ax.set_title('Real-time Sensor 3D Pressure Map', fontsize=12, pad=20)
         
-        # Set fixed view angle for better 3D effect
-        self.ax.view_init(elev=30, azim=45)
+        # Set optimized view angle for better visibility of individual bars
+        self.ax.view_init(elev=self.current_elev, azim=self.current_azim)  # Use stored angles
         
-        # Set axis ranges
+        # Set axis ranges with better spacing
         self.ax.set_xlim(-0.5, COLS-0.5)
         self.ax.set_ylim(-0.5, ROWS-0.5)
-        self.ax.set_zlim(0, 1)
+        self.ax.set_zlim(0, 1.1)  # Slightly higher to show tall bars better
+        
+        # Improve grid and background for better visibility
+        self.ax.grid(True, alpha=0.3)
+        self.ax.xaxis.pane.fill = False
+        self.ax.yaxis.pane.fill = False
+        self.ax.zaxis.pane.fill = False
+        
+        # Make pane edges more subtle
+        self.ax.xaxis.pane.set_edgecolor('gray')
+        self.ax.yaxis.pane.set_edgecolor('gray')
+        self.ax.zaxis.pane.set_edgecolor('gray')
+        self.ax.xaxis.pane.set_alpha(0.1)
+        self.ax.yaxis.pane.set_alpha(0.1)
+        self.ax.zaxis.pane.set_alpha(0.1)
         
         # Initialize empty bars collection
         self.bars = None
@@ -365,10 +488,12 @@ class App:
             # Set colors based on values
             colors = plt.cm.viridis(dz)
             
-            # Draw 3D bar chart
+            # Draw 3D bar chart with enhanced visual effects
             self.bars = self.ax.bar3d(self.xpos, self.ypos, self.zpos, 
                                self.dx, self.dy, dz, 
-                               color=colors, alpha=0.8, edgecolor='black', linewidth=0.1)
+                               color=colors, alpha=0.9, 
+                               edgecolor='darkgray', linewidth=0.5,
+                               shade=True)
             
             # Add colorbar only once
             if self.colorbar is None:
@@ -387,10 +512,12 @@ class App:
             # Set new colors
             colors = plt.cm.viridis(dz)
             
-            # Draw new bars
+            # Draw new bars with enhanced visual effects
             self.bars = self.ax.bar3d(self.xpos, self.ypos, self.zpos, 
                                self.dx, self.dy, dz, 
-                               color=colors, alpha=0.8, edgecolor='black', linewidth=0.1)
+                               color=colors, alpha=0.9, 
+                               edgecolor='darkgray', linewidth=0.5,
+                               shade=True)
         
         # Update statistics
         self.update_statistics(norm)
