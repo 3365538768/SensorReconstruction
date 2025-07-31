@@ -148,19 +148,22 @@ class App:
         
         # Configure grid weights for responsive layout
         root.grid_rowconfigure(0, weight=1)
-        root.grid_columnconfigure(0, weight=1)
-        root.grid_columnconfigure(1, weight=0)
+        root.grid_columnconfigure(0, weight=3)  # Give more weight to plot area
+        root.grid_columnconfigure(1, weight=1)  # Less weight to control panel
 
-        # Create 3D matplotlib figure
-        self.fig = plt.figure(figsize=(8, 6))
+        # Create 3D matplotlib figure with fixed size
+        self.fig = plt.figure(figsize=(10, 8))
         self.ax = self.fig.add_subplot(111, projection='3d')
+        
+        # Set tight layout to prevent overlap
+        self.fig.tight_layout()
         
         # Place canvas on the left side
         self.canvas = FigureCanvasTkAgg(self.fig, master=root)
         self.canvas.get_tk_widget().grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
 
         # Right side control panel
-        control_frame = tk.Frame(root, width=150)
+        control_frame = tk.Frame(root, width=200)
         control_frame.grid(row=0, column=1, sticky="ns", padx=5, pady=5)
         control_frame.grid_propagate(False)  # Fixed control panel width
 
@@ -180,20 +183,90 @@ class App:
 
         # Status information label
         self.status_label = tk.Label(control_frame, text="Status: Running", 
-                                   font=("Arial", 10), wraplength=140)
+                                   font=("Arial", 10), wraplength=180)
         self.status_label.pack(pady=(20, 10))
 
         # Data statistics label
         self.stats_label = tk.Label(control_frame, text="", 
-                                  font=("Arial", 9), wraplength=140, justify="left")
+                                  font=("Arial", 9), wraplength=180, justify="left")
         self.stats_label.pack(pady=10)
 
-        # Initialize 3D plot
-        self.setup_3d_plot()
+        # Add mode switch button
+        self.mode_btn = tk.Button(control_frame, text="Switch to 2D Mode", command=self.toggle_display_mode,
+                           width=15, height=1, bg="#FF9800", fg="white")
+        self.mode_btn.pack(pady=5)
+        
+        # Initialize display mode
+        self.display_mode_3d = True
+        self.bars = None
+        self.colorbar = None
+        self.heatmap_im = None
+        
+        # Initialize plot
+        self.setup_plot()
+        self.last_update_time = 0
         self.update_plot()
+
+    def toggle_display_mode(self):
+        """Toggle between 2D and 3D display modes"""
+        self.display_mode_3d = not self.display_mode_3d
+        
+        # Reset plot objects
+        self.bars = None
+        self.heatmap_im = None
+        self.colorbar = None
+        
+        # Setup new plot mode
+        self.setup_plot()
+        
+        # Update button text
+        mode_text = "Switch to 2D Mode" if self.display_mode_3d else "Switch to 3D Mode"
+        self.mode_btn.config(text=mode_text)
+        
+        # Force canvas update
+        self.canvas.draw()
+
+    def setup_plot(self):
+        """Setup plot based on current display mode"""
+        if self.display_mode_3d:
+            self.setup_3d_plot()
+        else:
+            self.setup_2d_plot()
+
+    def setup_2d_plot(self):
+        """Initialize 2D heatmap settings"""
+        # Clear and recreate 2D axis
+        self.fig.clear()
+        self.ax = self.fig.add_subplot(111)
+        
+        # Create 2D heatmap
+        initial_data = np.zeros((ROWS, COLS))
+        self.heatmap_im = self.ax.imshow(initial_data, 
+                                       cmap='viridis', vmin=0, vmax=1, 
+                                       interpolation='nearest')
+        
+        # Set labels and title
+        self.ax.set_xlabel('Sensor Column (X)', fontsize=10)
+        self.ax.set_ylabel('Sensor Row (Y)', fontsize=10)
+        self.ax.set_title('Real-time Sensor 2D Pressure Map', fontsize=12)
+        
+        # Set ticks
+        self.ax.set_xticks(np.arange(COLS))
+        self.ax.set_yticks(np.arange(ROWS))
+        
+        # Add colorbar
+        self.colorbar = self.fig.colorbar(self.heatmap_im, ax=self.ax, 
+                                        shrink=0.8, aspect=20, label='Normalized Pressure')
+        
+        # Adjust layout
+        self.fig.tight_layout()
 
     def setup_3d_plot(self):
         """Initialize 3D plot settings"""
+        # Clear and recreate 3D axis
+        self.fig.clear()
+        self.ax = self.fig.add_subplot(111, projection='3d')
+        
         # Create coordinate grid
         x = np.arange(COLS)
         y = np.arange(ROWS)
@@ -209,10 +282,10 @@ class App:
         self.dy = np.ones_like(self.ypos) * 0.8
         
         # Set axis labels and title
-        self.ax.set_xlabel('Sensor Column (X)')
-        self.ax.set_ylabel('Sensor Row (Y)')
-        self.ax.set_zlabel('Normalized Pressure')
-        self.ax.set_title('Real-time Sensor 3D Pressure Map')
+        self.ax.set_xlabel('Sensor Column (X)', fontsize=10)
+        self.ax.set_ylabel('Sensor Row (Y)', fontsize=10)
+        self.ax.set_zlabel('Normalized Pressure', fontsize=10)
+        self.ax.set_title('Real-time Sensor 3D Pressure Map', fontsize=12, pad=20)
         
         # Set fixed view angle for better 3D effect
         self.ax.view_init(elev=30, azim=45)
@@ -221,60 +294,129 @@ class App:
         self.ax.set_xlim(-0.5, COLS-0.5)
         self.ax.set_ylim(-0.5, ROWS-0.5)
         self.ax.set_zlim(0, 1)
+        
+        # Initialize empty bars collection
+        self.bars = None
+        
+        # Adjust layout
+        self.fig.tight_layout()
 
     def update_plot(self):
-        """Update 3D bar chart display"""
+        """Update display based on current mode"""
+        if self.display_mode_3d:
+            self.update_3d_plot()
+        else:
+            self.update_2d_plot()
+
+    def update_2d_plot(self):
+        """Update 2D heatmap display"""
+        import time
+        current_time = time.time()
+        
+        # Limit update frequency
+        if current_time - self.last_update_time < 0.2:
+            self.root.after(100, self.update_plot)
+            return
+        
+        self.last_update_time = current_time
+        
+        # Normalize data
+        norm = (current_raw - MIN_ADC) / (MAX_ADC - MIN_ADC)
+        norm = np.clip(norm, 0, 1)
+        
+        # Update heatmap
+        if self.heatmap_im is not None:
+            self.heatmap_im.set_data(norm)
+        
+        # Update statistics
+        self.update_statistics(norm)
+        
+        # Refresh canvas
+        try:
+            self.canvas.draw_idle()
+        except:
+            pass
+        
+        # Continue updating
+        self.root.after(200, self.update_plot)
+
+    def update_3d_plot(self):
+        """Update 3D bar chart display with optimized rendering"""
+        import time
+        current_time = time.time()
+        
+        # Limit update frequency to reduce rendering issues
+        if current_time - self.last_update_time < 0.2:  # Update every 200ms
+            self.root.after(100, self.update_plot)
+            return
+        
+        self.last_update_time = current_time
+        
         # Normalize and update
         norm = (current_raw - MIN_ADC) / (MAX_ADC - MIN_ADC)
         norm = np.clip(norm, 0, 1)
         
-        # Clear previous graphics
-        self.ax.clear()
-        
-        # Re-setup 3D plot
-        self.setup_3d_plot()
-        
         # Flatten data for bar chart heights
         dz = norm.flatten()
         
-        # Set colors based on values
-        # Use viridis colormap
-        colors = plt.cm.viridis(dz)
-        
-        # Draw 3D bar chart
-        bars = self.ax.bar3d(self.xpos, self.ypos, self.zpos, 
-                           self.dx, self.dy, dz, 
-                           color=colors, alpha=0.8, edgecolor='black', linewidth=0.1)
-        
-        # Add colorbar
-        if hasattr(self, 'colorbar'):
-            self.colorbar.remove()
-        
-        # Create a mapping object for colorbar
-        import matplotlib.cm as cm
-        import matplotlib.colors as mcolors
-        norm_obj = mcolors.Normalize(vmin=0, vmax=1)
-        sm = cm.ScalarMappable(cmap='viridis', norm=norm_obj)
-        sm.set_array([])
-        self.colorbar = self.fig.colorbar(sm, ax=self.ax, shrink=0.8, aspect=20, label='Normalized Pressure')
+        # Only clear and redraw if this is the first update or data has significantly changed
+        if self.bars is None:
+            # Initial setup - only do this once
+            # Set colors based on values
+            colors = plt.cm.viridis(dz)
+            
+            # Draw 3D bar chart
+            self.bars = self.ax.bar3d(self.xpos, self.ypos, self.zpos, 
+                               self.dx, self.dy, dz, 
+                               color=colors, alpha=0.8, edgecolor='black', linewidth=0.1)
+            
+            # Add colorbar only once
+            if self.colorbar is None:
+                import matplotlib.cm as cm
+                import matplotlib.colors as mcolors
+                norm_obj = mcolors.Normalize(vmin=0, vmax=1)
+                sm = cm.ScalarMappable(cmap='viridis', norm=norm_obj)
+                sm.set_array([])
+                self.colorbar = self.fig.colorbar(sm, ax=self.ax, shrink=0.8, aspect=20, label='Normalized Pressure')
+        else:
+            # Efficient update - only clear bars and redraw them
+            # Remove old bars
+            for bar in self.bars:
+                bar.remove()
+            
+            # Set new colors
+            colors = plt.cm.viridis(dz)
+            
+            # Draw new bars
+            self.bars = self.ax.bar3d(self.xpos, self.ypos, self.zpos, 
+                               self.dx, self.dy, dz, 
+                               color=colors, alpha=0.8, edgecolor='black', linewidth=0.1)
         
         # Update statistics
+        self.update_statistics(norm)
+        
+        # Refresh canvas less frequently
+        try:
+            self.canvas.draw_idle()  # Use draw_idle instead of draw for better performance
+        except:
+            pass  # Ignore drawing errors
+        
+        # Continue updating
+        self.root.after(200, self.update_plot)  # Slower update rate
+
+    def update_statistics(self, norm):
+        """Update statistics display"""
         min_val = np.min(norm)
         max_val = np.max(norm)
         avg_val = np.mean(norm)
         
-        stats_text = f"Statistics:\nMin: {min_val:.3f}\nMax: {max_val:.3f}\nAvg: {avg_val:.3f}\nSaved: {len(saved_frames)} frames"
+        mode_text = "3D" if self.display_mode_3d else "2D"
+        stats_text = f"Mode: {mode_text}\nMin: {min_val:.3f}\nMax: {max_val:.3f}\nAvg: {avg_val:.3f}\nSaved: {len(saved_frames)} frames"
         self.stats_label.config(text=stats_text)
         
         # Update status
         data_source = "Simulation" if SIMULATION_MODE else "Serial Port"
         self.status_label.config(text=f"Status: Running\nData Source: {data_source}")
-        
-        # Refresh canvas
-        self.canvas.draw()
-        
-        # Continue updating
-        self.root.after(100, self.update_plot)
 
     def save_frame(self):
         # Use number of saved entries as index
