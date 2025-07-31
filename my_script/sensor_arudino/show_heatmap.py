@@ -10,6 +10,7 @@ import sys
 import time
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 
 # --- Configuration & Environment ---
 def detect_serial_port():
@@ -143,47 +144,136 @@ def serial_reader():
 class App:
     def __init__(self, root):
         self.root = root
-        root.title("Sensor Heatmap UI")
+        root.title("Sensor 3D Heatmap UI")
+        
+        # 配置grid权重，让界面能够自适应调整
+        root.grid_rowconfigure(0, weight=1)
+        root.grid_columnconfigure(0, weight=1)
+        root.grid_columnconfigure(1, weight=0)
 
-        # matplotlib 图
-        self.fig, self.ax = plt.subplots(figsize=(5,5))
+        # 创建3D matplotlib图形
+        self.fig = plt.figure(figsize=(8, 6))
+        self.ax = self.fig.add_subplot(111, projection='3d')
+        
+        # 将canvas放在左侧
         self.canvas = FigureCanvasTkAgg(self.fig, master=root)
-        self.canvas.get_tk_widget().grid(row=0, column=0, columnspan=2)
+        self.canvas.get_tk_widget().grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
 
-        self.im = self.ax.imshow(np.zeros((ROWS,COLS)), cmap='viridis', vmin=0, vmax=1)
-        self.ax.set_title("Real-time Heatmap")
-        self.ax.set_xticks(np.arange(COLS)); self.ax.set_yticks(np.arange(ROWS))
-        self.fig.colorbar(self.im, ax=self.ax, label='Normalized')
+        # 右侧控制面板
+        control_frame = tk.Frame(root, width=150)
+        control_frame.grid(row=0, column=1, sticky="ns", padx=5, pady=5)
+        control_frame.grid_propagate(False)  # 固定控制面板宽度
 
-        # 文本标签
-        self.texts = []
-        for r in range(ROWS):
-            row = []
-            for c in range(COLS):
-                txt = self.ax.text(c, r, '', ha='center', va='center', fontsize=8)
-                row.append(txt)
-            self.texts.append(row)
+        # 添加标题标签
+        title_label = tk.Label(control_frame, text="控制面板", font=("Arial", 12, "bold"))
+        title_label.pack(pady=(10, 20))
 
         # Save Frame 按钮
-        btn_save = tk.Button(root, text="Save Frame", command=self.save_frame)
-        btn_save.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
+        btn_save = tk.Button(control_frame, text="保存当前帧", command=self.save_frame, 
+                           width=15, height=2, bg="#4CAF50", fg="white")
+        btn_save.pack(pady=10)
+        
         # Export CSV 按钮
-        btn_exp  = tk.Button(root, text="Export CSV", command=self.export_csv)
-        btn_exp.grid(row=1, column=1, sticky="ew", padx=5, pady=5)
+        btn_exp = tk.Button(control_frame, text="导出CSV", command=self.export_csv,
+                          width=15, height=2, bg="#2196F3", fg="white")
+        btn_exp.pack(pady=10)
 
+        # 状态信息标签
+        self.status_label = tk.Label(control_frame, text="状态: 运行中", 
+                                   font=("Arial", 10), wraplength=140)
+        self.status_label.pack(pady=(20, 10))
+
+        # 数据统计标签
+        self.stats_label = tk.Label(control_frame, text="", 
+                                  font=("Arial", 9), wraplength=140, justify="left")
+        self.stats_label.pack(pady=10)
+
+        # 初始化3D图形
+        self.setup_3d_plot()
         self.update_plot()
 
+    def setup_3d_plot(self):
+        """初始化3D图形设置"""
+        # 创建坐标网格
+        x = np.arange(COLS)
+        y = np.arange(ROWS)
+        self.X, self.Y = np.meshgrid(x, y)
+        
+        # 扁平化坐标用于柱状图
+        self.xpos = self.X.flatten()
+        self.ypos = self.Y.flatten()
+        self.zpos = np.zeros_like(self.xpos)
+        
+        # 柱子的宽度和深度
+        self.dx = np.ones_like(self.xpos) * 0.8
+        self.dy = np.ones_like(self.ypos) * 0.8
+        
+        # 设置坐标轴标签和标题
+        self.ax.set_xlabel('传感器列 (X)')
+        self.ax.set_ylabel('传感器行 (Y)')
+        self.ax.set_zlabel('归一化数值')
+        self.ax.set_title('实时传感器3D热力图')
+        
+        # 设置固定的视角以获得更好的3D效果
+        self.ax.view_init(elev=30, azim=45)
+        
+        # 设置坐标轴范围
+        self.ax.set_xlim(-0.5, COLS-0.5)
+        self.ax.set_ylim(-0.5, ROWS-0.5)
+        self.ax.set_zlim(0, 1)
+
     def update_plot(self):
+        """更新3D柱状图显示"""
         # 归一化并更新
         norm = (current_raw - MIN_ADC) / (MAX_ADC - MIN_ADC)
         norm = np.clip(norm, 0, 1)
-        self.im.set_data(norm)
-        for r in range(ROWS):
-            for c in range(COLS):
-                v = norm[r,c]
-                self.texts[r][c].set_text(f"{v:.2f}")
-                self.texts[r][c].set_color('white' if v<0.5 else 'black')
+        
+        # 清除之前的图形
+        self.ax.clear()
+        
+        # 重新设置3D图形
+        self.setup_3d_plot()
+        
+        # 扁平化数据用于柱状图高度
+        dz = norm.flatten()
+        
+        # 根据数值设置颜色
+        # 使用viridis色彩映射
+        colors = plt.cm.viridis(dz)
+        
+        # 绘制3D柱状图
+        bars = self.ax.bar3d(self.xpos, self.ypos, self.zpos, 
+                           self.dx, self.dy, dz, 
+                           color=colors, alpha=0.8, edgecolor='black', linewidth=0.1)
+        
+        # 添加颜色条
+        if hasattr(self, 'colorbar'):
+            self.colorbar.remove()
+        
+        # 创建一个映射对象用于颜色条
+        import matplotlib.cm as cm
+        import matplotlib.colors as mcolors
+        norm_obj = mcolors.Normalize(vmin=0, vmax=1)
+        sm = cm.ScalarMappable(cmap='viridis', norm=norm_obj)
+        sm.set_array([])
+        self.colorbar = self.fig.colorbar(sm, ax=self.ax, shrink=0.8, aspect=20, label='归一化数值')
+        
+        # 更新统计信息
+        min_val = np.min(norm)
+        max_val = np.max(norm)
+        avg_val = np.mean(norm)
+        
+        stats_text = f"统计信息:\n最小值: {min_val:.3f}\n最大值: {max_val:.3f}\n平均值: {avg_val:.3f}\n已保存: {len(saved_frames)}帧"
+        self.stats_label.config(text=stats_text)
+        
+        # 更新状态
+        data_source = "模拟数据" if SIMULATION_MODE else "串口数据"
+        self.status_label.config(text=f"状态: 运行中\n数据源: {data_source}")
+        
+        # 刷新画布
         self.canvas.draw()
+        
+        # 继续更新
         self.root.after(100, self.update_plot)
 
     def save_frame(self):
