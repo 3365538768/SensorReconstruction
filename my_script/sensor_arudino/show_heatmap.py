@@ -380,9 +380,9 @@ class App:
                 self.colorbar = self.fig.colorbar(sm, ax=self.ax, shrink=0.8, aspect=20, label='Normalized Pressure')
         else:
             # Efficient update - only clear bars and redraw them
-            # Remove old bars
-            for bar in self.bars:
-                bar.remove()
+            # Remove old bars (bar3d returns a Poly3DCollection object)
+            if self.bars is not None:
+                self.bars.remove()
             
             # Set new colors
             colors = plt.cm.viridis(dz)
