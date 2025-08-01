@@ -380,7 +380,7 @@ class App:
         # Create 2D heatmap
         initial_data = np.zeros((ROWS, COLS))
         self.heatmap_im = self.ax.imshow(initial_data, 
-                                       cmap='viridis', vmin=0, vmax=1, 
+                                       cmap='viridis_r', vmin=0, vmax=1, 
                                        interpolation='nearest')
         
         # Set labels and title
@@ -530,7 +530,7 @@ class App:
         if self.bars is None:
             # Initial setup - only do this once
             # Set colors based on values
-            colors = plt.cm.viridis(dz)
+            colors = plt.cm.viridis_r(dz)
             
             # Draw 3D bar chart with enhanced visual effects
             self.bars = self.ax.bar3d(self.xpos, self.ypos, self.zpos, 
@@ -544,7 +544,7 @@ class App:
                 import matplotlib.cm as cm
                 import matplotlib.colors as mcolors
                 norm_obj = mcolors.Normalize(vmin=0, vmax=1)
-                sm = cm.ScalarMappable(cmap='viridis', norm=norm_obj)
+                sm = cm.ScalarMappable(cmap='viridis_r', norm=norm_obj)
                 sm.set_array([])
                 self.colorbar = self.fig.colorbar(sm, ax=self.ax, shrink=0.8, aspect=20, label='Normalized Pressure')
         else:
@@ -554,7 +554,7 @@ class App:
                 self.bars.remove()
             
             # Set new colors
-            colors = plt.cm.viridis(dz)
+            colors = plt.cm.viridis_r(dz)
             
             # Draw new bars with enhanced visual effects
             self.bars = self.ax.bar3d(self.xpos, self.ypos, self.zpos, 
@@ -594,7 +594,7 @@ class App:
                 if value > 0.1:  # Show values > 0.1
                     text = self.ax.text(j, i, f'{value:.2f}', 
                                       ha='center', va='center', 
-                                      color='black', fontsize=8, 
+                                      color='black', fontsize=6, 
                                       fontweight='bold',
                                       bbox=dict(boxstyle='round,pad=0.1', 
                                               facecolor='white', alpha=0.7))
@@ -621,7 +621,7 @@ class App:
                     
                     text = self.ax.text(x_pos, y_pos, z_pos, f'{value:.2f}', 
                                       ha='center', va='center', 
-                                      color='black', fontsize=7, 
+                                      color='black', fontsize=5, 
                                       fontweight='bold')
                     self._text_annotations_3d.append(text)
 
