@@ -147,18 +147,18 @@ class App:
         root.title("Sensor 3D Pressure Monitor")
         
         # Set window size optimized for small screens
-        window_width = 1000
-        window_height = 650
+        window_width = 1100
+        window_height = 700
         
         # Get screen dimensions
         screen_width = root.winfo_screenwidth()
         screen_height = root.winfo_screenheight()
         
         # Adjust window size if screen is too small
-        if screen_width < 1200:
-            window_width = min(900, screen_width - 100)
-        if screen_height < 800:
-            window_height = min(600, screen_height - 100)
+        if screen_width < 1300:
+            window_width = min(1000, screen_width - 100)
+        if screen_height < 900:
+            window_height = min(650, screen_height - 100)
             
         # Center window on screen
         x = (screen_width - window_width) // 2
@@ -184,98 +184,109 @@ class App:
         self.canvas.get_tk_widget().grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
 
         # Right side control panel with enhanced design
-        control_frame = tk.Frame(root, width=220, bg="#f0f0f0", relief=tk.RIDGE, bd=2)
-        control_frame.grid(row=0, column=1, sticky="ns", padx=8, pady=8)
+        control_frame = tk.Frame(root, width=240, bg="#ffffff", relief=tk.RAISED, bd=3)
+        control_frame.grid(row=0, column=1, sticky="ns", padx=10, pady=10)
         control_frame.grid_propagate(False)  # Fixed control panel width
 
         # Add title label with improved styling
-        title_label = tk.Label(control_frame, text="🎛️ Control Panel", 
-                             font=("Arial", 14, "bold"), bg="#f0f0f0", fg="#333333")
-        title_label.pack(pady=(15, 20))
+        title_label = tk.Label(control_frame, text="⚙️ Control Panel", 
+                             font=("Helvetica", 16, "bold"), bg="#ffffff", fg="#2c3e50")
+        title_label.pack(pady=(20, 25))
 
         # Buttons container with better spacing
-        btn_frame = tk.Frame(control_frame, bg="#f0f0f0")
-        btn_frame.pack(pady=5)
+        btn_frame = tk.Frame(control_frame, bg="#ffffff")
+        btn_frame.pack(pady=10)
         
         # Save Frame button with enhanced styling
         btn_save = tk.Button(btn_frame, text="💾 Save Frame", command=self.save_frame, 
-                           width=18, height=2, bg="#4CAF50", fg="white", 
-                           font=("Arial", 10, "bold"), relief=tk.RAISED, bd=3)
-        btn_save.pack(pady=8)
+                           width=16, height=2, bg="#27ae60", fg="white", 
+                           font=("Helvetica", 12, "bold"), relief=tk.RAISED, bd=4,
+                           activebackground="#2ecc71", activeforeground="white",
+                           cursor="hand2")
+        btn_save.pack(pady=10)
         
         # Export CSV button with enhanced styling
         btn_exp = tk.Button(btn_frame, text="📊 Export CSV", command=self.export_csv,
-                          width=18, height=2, bg="#2196F3", fg="white",
-                          font=("Arial", 10, "bold"), relief=tk.RAISED, bd=3)
-        btn_exp.pack(pady=8)
+                          width=16, height=2, bg="#3498db", fg="white",
+                          font=("Helvetica", 12, "bold"), relief=tk.RAISED, bd=4,
+                          activebackground="#5dade2", activeforeground="white",
+                          cursor="hand2")
+        btn_exp.pack(pady=10)
 
         # Mode switch button with enhanced styling
-        self.mode_btn = tk.Button(btn_frame, text="🔄 Switch to 2D", command=self.toggle_display_mode,
-                           width=18, height=2, bg="#FF9800", fg="white",
-                           font=("Arial", 10, "bold"), relief=tk.RAISED, bd=3)
-        self.mode_btn.pack(pady=8)
+        self.mode_btn = tk.Button(btn_frame, text="🔄 2D Mode", command=self.toggle_display_mode,
+                           width=16, height=2, bg="#e67e22", fg="white",
+                           font=("Helvetica", 12, "bold"), relief=tk.RAISED, bd=4,
+                           activebackground="#f39c12", activeforeground="white",
+                           cursor="hand2")
+        self.mode_btn.pack(pady=10)
 
         # Separator line
-        separator = tk.Frame(control_frame, height=2, bg="#cccccc")
-        separator.pack(fill=tk.X, padx=20, pady=(10, 15))
+        separator = tk.Frame(control_frame, height=3, bg="#bdc3c7")
+        separator.pack(fill=tk.X, padx=25, pady=(15, 20))
 
         # Status information with enhanced styling
-        status_frame = tk.Frame(control_frame, bg="#f0f0f0")
-        status_frame.pack(pady=5, padx=10, fill=tk.X)
+        status_frame = tk.Frame(control_frame, bg="#ecf0f1", relief=tk.GROOVE, bd=2)
+        status_frame.pack(pady=8, padx=15, fill=tk.X)
         
         status_title = tk.Label(status_frame, text="📡 System Status", 
-                              font=("Arial", 11, "bold"), bg="#f0f0f0", fg="#333333")
-        status_title.pack(anchor=tk.W)
+                              font=("Helvetica", 13, "bold"), bg="#ecf0f1", fg="#2c3e50")
+        status_title.pack(anchor=tk.W, padx=10, pady=(8, 5))
         
         self.status_label = tk.Label(status_frame, text="Status: Running", 
-                                   font=("Arial", 9), bg="#f0f0f0", fg="#666666",
-                                   wraplength=180, justify=tk.LEFT)
-        self.status_label.pack(anchor=tk.W, pady=(5, 10))
+                                   font=("Helvetica", 11), bg="#ecf0f1", fg="#34495e",
+                                   wraplength=200, justify=tk.LEFT)
+        self.status_label.pack(anchor=tk.W, padx=10, pady=(0, 8))
 
         # Data statistics with enhanced styling
-        stats_frame = tk.Frame(control_frame, bg="#f0f0f0")
-        stats_frame.pack(pady=5, padx=10, fill=tk.X)
+        stats_frame = tk.Frame(control_frame, bg="#ecf0f1", relief=tk.GROOVE, bd=2)
+        stats_frame.pack(pady=8, padx=15, fill=tk.X)
         
         stats_title = tk.Label(stats_frame, text="📈 Data Statistics", 
-                             font=("Arial", 11, "bold"), bg="#f0f0f0", fg="#333333")
-        stats_title.pack(anchor=tk.W)
+                             font=("Helvetica", 13, "bold"), bg="#ecf0f1", fg="#2c3e50")
+        stats_title.pack(anchor=tk.W, padx=10, pady=(8, 5))
         
         self.stats_label = tk.Label(stats_frame, text="", 
-                                  font=("Arial", 9), bg="#f0f0f0", fg="#666666",
-                                  wraplength=180, justify=tk.LEFT)
-        self.stats_label.pack(anchor=tk.W, pady=(5, 0))
+                                  font=("Helvetica", 11), bg="#ecf0f1", fg="#34495e",
+                                  wraplength=200, justify=tk.LEFT)
+        self.stats_label.pack(anchor=tk.W, padx=10, pady=(0, 8))
         
         # View angle controls (only for 3D mode)
-        view_frame = tk.Frame(control_frame, bg="#f0f0f0")
-        view_frame.pack(pady=10, padx=10, fill=tk.X)
+        view_frame = tk.Frame(control_frame, bg="#ecf0f1", relief=tk.GROOVE, bd=2)
+        view_frame.pack(pady=8, padx=15, fill=tk.X)
         
         view_title = tk.Label(view_frame, text="👁️ View Controls", 
-                            font=("Arial", 11, "bold"), bg="#f0f0f0", fg="#333333")
-        view_title.pack(anchor=tk.W)
+                            font=("Helvetica", 13, "bold"), bg="#ecf0f1", fg="#2c3e50")
+        view_title.pack(anchor=tk.W, padx=10, pady=(8, 5))
         
         # View angle buttons
-        view_btn_frame = tk.Frame(view_frame, bg="#f0f0f0")
-        view_btn_frame.pack(pady=5)
+        view_btn_frame = tk.Frame(view_frame, bg="#ecf0f1")
+        view_btn_frame.pack(pady=(5, 10))
         
-        btn_top = tk.Button(view_btn_frame, text="⬆️ Top", command=lambda: self.adjust_view("top"),
-                          width=8, height=1, bg="#9C27B0", fg="white", font=("Arial", 8))
-        btn_top.grid(row=0, column=1, padx=2, pady=2)
+        btn_top = tk.Button(view_btn_frame, text="⬆️", command=lambda: self.adjust_view("top"),
+                          width=4, height=1, bg="#8e44ad", fg="white", font=("Helvetica", 11, "bold"),
+                          relief=tk.RAISED, bd=3, cursor="hand2")
+        btn_top.grid(row=0, column=1, padx=3, pady=3)
         
-        btn_left = tk.Button(view_btn_frame, text="⬅️ Left", command=lambda: self.adjust_view("left"),
-                           width=8, height=1, bg="#9C27B0", fg="white", font=("Arial", 8))
-        btn_left.grid(row=1, column=0, padx=2, pady=2)
+        btn_left = tk.Button(view_btn_frame, text="⬅️", command=lambda: self.adjust_view("left"),
+                           width=4, height=1, bg="#8e44ad", fg="white", font=("Helvetica", 11, "bold"),
+                           relief=tk.RAISED, bd=3, cursor="hand2")
+        btn_left.grid(row=1, column=0, padx=3, pady=3)
         
-        btn_reset = tk.Button(view_btn_frame, text="🎯 Reset", command=lambda: self.adjust_view("reset"),
-                            width=8, height=1, bg="#795548", fg="white", font=("Arial", 8))
-        btn_reset.grid(row=1, column=1, padx=2, pady=2)
+        btn_reset = tk.Button(view_btn_frame, text="🎯", command=lambda: self.adjust_view("reset"),
+                            width=4, height=1, bg="#7f8c8d", fg="white", font=("Helvetica", 11, "bold"),
+                            relief=tk.RAISED, bd=3, cursor="hand2")
+        btn_reset.grid(row=1, column=1, padx=3, pady=3)
         
-        btn_right = tk.Button(view_btn_frame, text="➡️ Right", command=lambda: self.adjust_view("right"),
-                            width=8, height=1, bg="#9C27B0", fg="white", font=("Arial", 8))
-        btn_right.grid(row=1, column=2, padx=2, pady=2)
+        btn_right = tk.Button(view_btn_frame, text="➡️", command=lambda: self.adjust_view("right"),
+                            width=4, height=1, bg="#8e44ad", fg="white", font=("Helvetica", 11, "bold"),
+                            relief=tk.RAISED, bd=3, cursor="hand2")
+        btn_right.grid(row=1, column=2, padx=3, pady=3)
         
-        btn_bottom = tk.Button(view_btn_frame, text="⬇️ Bottom", command=lambda: self.adjust_view("bottom"),
-                             width=8, height=1, bg="#9C27B0", fg="white", font=("Arial", 8))
-        btn_bottom.grid(row=2, column=1, padx=2, pady=2)
+        btn_bottom = tk.Button(view_btn_frame, text="⬇️", command=lambda: self.adjust_view("bottom"),
+                             width=4, height=1, bg="#8e44ad", fg="white", font=("Helvetica", 11, "bold"),
+                             relief=tk.RAISED, bd=3, cursor="hand2")
+        btn_bottom.grid(row=2, column=1, padx=3, pady=3)
         
         # Initialize display mode
         self.display_mode_3d = True
@@ -303,7 +314,7 @@ class App:
         self.setup_plot()
         
         # Update button text with emoji
-        mode_text = "🔄 Switch to 2D" if self.display_mode_3d else "🔄 Switch to 3D"
+        mode_text = "🔄 2D Mode" if self.display_mode_3d else "🔄 3D Mode"
         self.mode_btn.config(text=mode_text)
         
         # Force canvas update
@@ -447,9 +458,12 @@ class App:
         norm = (current_raw - MIN_ADC) / (MAX_ADC - MIN_ADC)
         norm = np.clip(norm, 0, 1)
         
+        # Flip Y-axis to match physical sensor orientation
+        norm_flipped = np.flipud(norm)
+        
         # Update heatmap
         if self.heatmap_im is not None:
-            self.heatmap_im.set_data(norm)
+            self.heatmap_im.set_data(norm_flipped)
         
         # Update statistics
         self.update_statistics(norm)
@@ -479,8 +493,11 @@ class App:
         norm = (current_raw - MIN_ADC) / (MAX_ADC - MIN_ADC)
         norm = np.clip(norm, 0, 1)
         
+        # Flip Y-axis to match physical sensor orientation
+        norm_flipped = np.flipud(norm)
+        
         # Flatten data for bar chart heights
-        dz = norm.flatten()
+        dz = norm_flipped.flatten()
         
         # Only clear and redraw if this is the first update or data has significantly changed
         if self.bars is None:
