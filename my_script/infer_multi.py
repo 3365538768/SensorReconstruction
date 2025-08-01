@@ -5,6 +5,7 @@ import re
 import numpy as np
 import pandas as pd
 from plyfile import PlyData, PlyElement
+import argparse
 
 import torch
 import torch.nn as nn
@@ -13,11 +14,16 @@ from tqdm import tqdm
 from torch_geometric.nn import GraphConv, GATConv
 
 # 依赖库：用于高效的K-近邻搜索
-from sklearn.neighbors import KDTree
+try:
+    from sklearn.neighbors import KDTree
+except ImportError:
+    print("Warning: scikit-learn not found. Spatial blending will not be available.")
+    print("Please install it via: pip install scikit-learn")
+    KDTree = None
 
 
 # =========================================
-# 0. 公共函数 (不变)
+# 0. 公共函数
 # =========================================
 def write_ply(path, pts):
     """保存 N x 3 数组为 ASCII PLY 文件。"""
@@ -42,9 +48,8 @@ def _load_ply_point_cloud(path):
 
 
 # =========================================
-# 1. 模型定义 (不变, 已折叠)
+# 1. 模型定义 (与训练时保持一致)
 # =========================================
-# ... (DeformModelEnhanced, GNNDeformer, 等类定义不变)
 class TimeEncoding(nn.Module):
     def __init__(self, num_bands=6):
         super().__init__()
@@ -165,9 +170,8 @@ class DeformModelEnhanced(nn.Module):
 
 
 # =========================================
-# 2. 辅助函数 (不变, 已折叠)
+# 2. 辅助函数
 # =========================================
-# ... (build_edge_index, smoothstep, calculate_blending_weights 等函数不变)
 def build_edge_index(res):
     nx, ny, nz = res
     idx = np.arange(nx * ny * nz).reshape(nx, ny, nz)
@@ -178,8 +182,9 @@ def build_edge_index(res):
                 for di, dj, dk in [(1,0,0),(0,1,0),(0,0,1)]:
                     ni, nj, nk = i+di, j+dj, k+dk
                     if ni < nx and nj < ny and nk < nz:
-                        u = int(idx[i,j,k]); v = int(idx[ni,nj,nk])
+                        u, v = int(idx[i,j,k]), int(idx[ni,nj,nk])
                         edges += [(u, v), (v, u)]
+    if not edges: return torch.empty((2, 0), dtype=torch.long)
     u, v = zip(*edges)
     return torch.tensor([u, v], dtype=torch.long)
 
@@ -196,34 +201,42 @@ def calculate_blending_weights(points_xyz, bbox_min, bbox_max, falloff_distance)
     weights = 1.0 - smoothstep(0.0, 1.0, dist)
     return weights
 
+
 # =========================================
-# 3. 区域数据处理器 (不变, 已折叠)
+# 3. 区域数据处理器
 # =========================================
-# ... (RegionProcessor 类不变)
 class RegionProcessor:
     """封装单个区域的数据加载和预处理逻辑"""
     def __init__(self, region_json_path, sensor_csv_path, all_pts_xyz_tensor, cage_res, sensor_res, falloff_distance, device):
         self.device = device
         self.sensor_res = sensor_res
         self.region_id = os.path.basename(region_json_path)
+        
         cfg = json.load(open(region_json_path))
         self.bbox_min = torch.tensor(cfg['bbox'][0], dtype=torch.float32, device=device)
         self.bbox_max = torch.tensor(cfg['bbox'][1], dtype=torch.float32, device=device)
         self.normal = np.array(cfg['normal'], dtype=np.float32)
+        
         raw = pd.read_csv(sensor_csv_path, header=None)
         col0 = pd.to_numeric(raw.iloc[:, 0], errors='coerce')
         valid = col0.notna().values
         self.frames = col0[valid].astype(int).values
         sensors = raw[valid].iloc[:, 1:].values.astype(np.float32)
+        
         H, W = self.sensor_res
         expected = H * W
         assert sensors.shape[1] == expected, f"sensor.csv 列数 {sensors.shape[1]} ≠ {H}×{W} for {sensor_csv_path}"
+        
         self.sensors_np = sensors
         self.frame_to_sensor_idx = {frame: i for i, frame in enumerate(self.frames)}
+        
         self._compute_norm(all_pts_xyz_tensor)
+        
         all_pts_norm = (all_pts_xyz_tensor + self.translate) @ self.rot_scale
+        
         self.cage_coords = torch.from_numpy(self._build_cage(cage_res).astype(np.float32)).to(device)
         self.all_weights = self._compute_weights_torch(all_pts_norm, self.cage_coords)
+        
         self.blending_weights = calculate_blending_weights(
             all_pts_xyz_tensor, self.bbox_min, self.bbox_max, falloff_distance
         ).unsqueeze(1)
@@ -232,8 +245,11 @@ class RegionProcessor:
         c = (self.bbox_min.cpu().numpy() + self.bbox_max.cpu().numpy()) / 2.0
         in_box_mask = torch.all((all_pts_xyz >= self.bbox_min) & (all_pts_xyz <= self.bbox_max), axis=1)
         pts_in_box = all_pts_xyz[in_box_mask].cpu().numpy()
+        
         if len(pts_in_box) == 0:
-            pts_in_box = self.bbox_min.cpu().numpy().reshape(1,3)
+            # 如果bbox内没有点，使用bbox中心作为参考点
+            pts_in_box = c.reshape(1,3)
+            
         pc = pts_in_box - c
         n = self.normal / np.linalg.norm(self.normal)
         z = np.array([0,0,1], dtype=np.float32); v = np.cross(n, z); s = np.linalg.norm(v); c0 = n.dot(z)
@@ -241,6 +257,7 @@ class RegionProcessor:
         R = np.eye(3, dtype=np.float32) + vx + vx.dot(vx) * ((1-c0)/(s**2+1e-8))
         pr = pc.dot(R.T)
         S = 1.0/(2*np.abs(pr).max()+1e-8)
+        
         self.translate = torch.from_numpy(-c.astype(np.float32)).to(self.device)
         self.rot_scale = torch.from_numpy((R*S).T.astype(np.float32)).to(self.device)
         self.inv_RS = torch.inverse(self.rot_scale)
@@ -258,57 +275,34 @@ class RegionProcessor:
     def get_sensor_data_for_frame(self, frame_id):
         if frame_id not in self.frame_to_sensor_idx:
             return None, None
+        
         idx = self.frame_to_sensor_idx[frame_id]
         H, W = self.sensor_res
         sensor = torch.from_numpy(self.sensors_np[idx].reshape(1, H, W)).to(self.device)
+        
         max_frame = float(self.frames.max()) if len(self.frames) > 0 else 1.0
-        t_frame = float(frame_id) / max_frame
+        t_frame = float(frame_id) / max_frame if max_frame > 0 else 0.0
         t_norm = torch.tensor(t_frame, dtype=torch.float32).to(self.device)
+        
         return sensor, t_norm
 
 
 # =========================================
-# 4. 新增与更新的函数
+# 4. 空间平滑函数
 # =========================================
 def auto_determine_blending_params(points, knn_percent=0.1, softness_factor=0.5):
-    """
-    根据点云的自身特性（点数，密度）自动推算合理的knn和sigma值。
-
-    Args:
-        points (np.array): 初始点云 N x 3。
-        knn_percent (float): 用于决定knn值的点云总数的百分比。
-        softness_factor (float): 柔软度因子，用于调整sigma，值越大越柔软。
-
-    Returns:
-        tuple: (计算出的knn值, 计算出的sigma值)
-    """
+    if KDTree is None: return 0, 0
     n_points = len(points)
-    
-    # 策略1: 基于点云总数和上下限来确定knn值
-    # 使用总点数的0.1%，但最小不低于30，最大不超过150
     knn = int(max(30, min(n_points * (knn_percent / 100.0), 150)))
-    
-    # 策略2: 基于knn的邻居距离动态确定sigma
     tree = KDTree(points)
-    # 查询每个点到其第k个邻居的距离
-    # 这个距离可以看作是局部邻域的半径
     distances_to_kth_neighbor, _ = tree.query(points, k=knn)
-    
-    # 我们关心的是最远的那个邻居（第k个）的距离，所以取最后一列
     kth_distances = distances_to_kth_neighbor[:, -1]
-    
-    # 计算所有这些“局部邻域半径”的平均值，作为基准尺度
     avg_scale = np.mean(kth_distances)
-    
-    # 最终的sigma是基准尺度乘以一个柔软度因子
     sigma = avg_scale * softness_factor
-    
     return knn, sigma
 
 def apply_spatial_blending(v_initial, v_predicted, k, sigma):
-    """
-    在点云上应用空间加权平均来平滑形变。(函数体不变)
-    """
+    if KDTree is None: return v_predicted
     initial_displacements = v_predicted - v_initial
     tree = KDTree(v_initial.astype(np.float64))
     dists, inds = tree.query(v_initial.astype(np.float64), k=k)
@@ -330,14 +324,19 @@ def inference_multi_region(args):
     print(f"Using device: {device}")
 
     # --- 文件发现 ---
-    region_files = sorted(glob.glob(os.path.join(args.data_dir, 'region_*.json')))
+    region_files = sorted(glob.glob(os.path.join(args.data_dir, 'region*.json')))
     if not region_files:
-        print(f"Error: No 'region_*.json' files found in '{args.data_dir}'."); return
+        print(f"Error: No 'region*.json' files found in '{args.data_dir}'."); return
+        
     regions_data_paths = []
     for region_file in region_files:
-        match = re.search(r'region_(\d+).json', os.path.basename(region_file))
+        # 匹配 region.json, region1.json, region_1.json 等
+        match = re.search(r'region(\d*)\.json', os.path.basename(region_file))
         if not match: continue
-        idx = match.group(1); sensor_file = os.path.join(args.data_dir, f'sensor_{idx}.csv')
+        
+        idx_str = match.group(1)
+        sensor_file = os.path.join(args.data_dir, f'sensor{idx_str}.csv')
+        
         if os.path.exists(sensor_file):
             regions_data_paths.append({'region_json': region_file, 'sensor_csv': sensor_file})
     print(f"Found {len(regions_data_paths)} region(s) to process.")
@@ -348,26 +347,16 @@ def inference_multi_region(args):
     all_pts_xyz_tensor = torch.from_numpy(all_pts_xyz_np).to(device)
     
     # --- 模型加载 ---
-    print("Initializing model...")
+    print("Initializing and loading model...")
     edge_index = build_edge_index(tuple(args.cage_res)).to(device)
+    # 创建一个临时的笼子坐标用于模型初始化
     temp_cage_coords_np = RegionProcessor._build_cage(None, tuple(args.cage_res))
     model = DeformModelEnhanced(
         sensor_dim=args.sensor_dim, cage_coords=temp_cage_coords_np, edge_index=edge_index,
         num_fourier_bands=args.num_fourier_bands, num_time_bands=args.num_time_bands
     ).to(device)
-    raw_state = torch.load(args.model_path, map_location=device)
-    mapped_state = {}
-    for k, v in raw_state.items():
-        if '.att_src' in k: nk = k.replace('.att_src', '.att_l')
-        elif '.att_dst' in k: nk = k.replace('.att_dst', '.att_r')
-        elif '.lin_src.weight' in k: nk = k.replace('.lin_src.weight', '.lin_l.weight')
-        elif '.lin_dst.weight' in k: nk = k.replace('.lin_dst.weight', '.lin_r.weight')
-        elif '.lin_rel.weight' in k: nk = k.replace('.lin_rel.weight', '.lin_l.weight')
-        elif '.lin_rel.bias' in k: nk = k.replace('.lin_rel.bias', '.lin_l.bias')
-        elif '.lin_root.weight' in k: nk = k.replace('.lin_root.weight', '.lin_r.weight')
-        else: nk = k
-        mapped_state[nk] = v
-    model.load_state_dict(mapped_state, strict=False)
+    
+    model.load_state_dict(torch.load(args.model_path, map_location=device))
     model.eval()
 
     # --- 区域预处理 ---
@@ -378,23 +367,28 @@ def inference_multi_region(args):
         sensor_res=tuple(args.sensor_res), falloff_distance=args.falloff_distance,
         device=device
     ) for paths in tqdm(regions_data_paths, desc="Processing Regions")]
+    
     all_frames = sorted(list(set.union(*[set(p.frames) for p in processors])))
     print(f"Total unique frames to process: {len(all_frames)}")
     
     # --- 自动计算平滑参数 ---
     effective_knn, effective_sigma = 0, 0
     if args.use_spatial_blending:
-        effective_knn, effective_sigma = auto_determine_blending_params(
-            all_pts_xyz_np,
-            knn_percent=args.blending_knn_percent,
-            softness_factor=args.blending_softness
-        )
-        print("\n" + "="*45)
-        print(" Auto-determined Spatial Blending Parameters")
-        print(f"  - Point Count: {len(all_pts_xyz_np)}")
-        print(f"  - KNN Percent: {args.blending_knn_percent}% -> Calculated KNN: {effective_knn}")
-        print(f"  - Softness Factor: {args.blending_softness} -> Calculated Sigma: {effective_sigma:.5f}")
-        print("="*45 + "\n")
+        if KDTree is None:
+            print("Warning: scikit-learn is not installed. Disabling spatial blending.")
+            args.use_spatial_blending = False
+        else:
+            effective_knn, effective_sigma = auto_determine_blending_params(
+                all_pts_xyz_np,
+                knn_percent=args.blending_knn_percent,
+                softness_factor=args.blending_softness
+            )
+            print("\n" + "="*45)
+            print(" Auto-determined Spatial Blending Parameters")
+            print(f"   - Point Count: {len(all_pts_xyz_np)}")
+            print(f"   - KNN Percent: {args.blending_knn_percent}% -> Calculated KNN: {effective_knn}")
+            print(f"   - Softness Factor: {args.blending_softness} -> Calculated Sigma: {effective_sigma:.5f}")
+            print("="*45 + "\n")
 
     # --- 主推理循环 ---
     out_dir_suffix = 'auto_blend' if args.use_spatial_blending else 'combined'
@@ -405,9 +399,11 @@ def inference_multi_region(args):
     with torch.no_grad():
         for frame_id in tqdm(all_frames, desc='Inferring Frames'):
             total_world_displacement = torch.zeros_like(all_pts_xyz_tensor)
+            
             for proc in processors:
                 sensor, t_norm = proc.get_sensor_data_for_frame(frame_id)
                 if sensor is None: continue
+                
                 delta = model(sensor.unsqueeze(0), t_norm.unsqueeze(0)).squeeze(0)
                 deformation_norm = proc.all_weights @ delta
                 blended_norm = deformation_norm * proc.blending_weights
@@ -430,6 +426,7 @@ def inference_multi_region(args):
             output_ply['x'] = deformed_pts_final_np[:, 0].astype(output_ply['x'].dtype)
             output_ply['y'] = deformed_pts_final_np[:, 1].astype(output_ply['y'].dtype)
             output_ply['z'] = deformed_pts_final_np[:, 2].astype(output_ply['z'].dtype)
+            
             output_path = os.path.join(objs_dir, f'object_{frame_id:05d}.ply')
             write_gaussian_ply(output_path, output_ply)
 
@@ -437,24 +434,27 @@ def inference_multi_region(args):
 
 
 if __name__ == '__main__':
-    import argparse
     parser = argparse.ArgumentParser(description="Multi-Region Deformation Prediction with Automated Spatial Blending")
-    # --- 通用参数 ---
-    parser.add_argument('--data_dir', type=str, default='test', help="Directory with sensor_*.csv & region_*.json files")
-    parser.add_argument('--init_ply_path', type=str, default='test/time_00000.ply', help='Path to the initial point cloud PLY file')
-    parser.add_argument('--model_path', type=str, default=r'outputs/bend/deform_model_final.pth', help='Path to the trained model weights')
-    parser.add_argument('--out_dir', type=str, default='inference_outputs/test_results', help='Parent directory for outputs')
-    parser.add_argument('--sensor_dim', type=int, default=512, help='Dimension of the sensor encoding')
-    parser.add_argument('--cage_res', nargs=3, type=int, default=[15,15,15], help='Resolution of the deformation cage')
-    parser.add_argument('--sensor_res', nargs=2, type=int, default=[10,10], help='Resolution of the sensor grid H W')
-    parser.add_argument('--num_fourier_bands', type=int, default=8, help='Number of Fourier frequency bands')
-    parser.add_argument('--num_time_bands', type=int, default=6, help='Number of frequency bands for time encoding')
-    parser.add_argument('--falloff_distance', type=float, default=0, help='Blending falloff distance from the bounding box')
+    # --- 核心参数 ---
+    parser.add_argument('--data_dir', type=str, default='test', help="包含 sensor_*.csv 和 region_*.json 文件的目录")
+    parser.add_argument('--init_ply_path', type=str, default='test/time_00000.ply', help='初始点云 PLY 文件的路径')
+    parser.add_argument('--model_path', type=str, default='outputs/experiment1/deform_model_final.pth', help='训练好的模型权重路径 (*.pth)')
+    parser.add_argument('--out_dir', type=str, default='inference_outputs/test', help='输出结果的父目录')
+    
+    # --- 模型结构参数 (必须与训练时一致) ---
+    parser.add_argument('--sensor_dim', type=int, default=512, help='传感器编码的维度')
+    parser.add_argument('--cage_res', nargs=3, type=int, default=[15,15,15], help='形变笼的分辨率')
+    parser.add_argument('--sensor_res', nargs=2, type=int, default=[10,10], help='传感器网格的分辨率 H W')
+    parser.add_argument('--num_fourier_bands', type=int, default=8, help='傅里叶位置编码的频带数')
+    parser.add_argument('--num_time_bands', type=int, default=6, help='时间编码的频带数')
+    
+    # --- 推理过程参数 ---
+    parser.add_argument('--falloff_distance', type=float, default=0.1, help='区域边界框外的混合衰减距离')
     
     # --- 自动空间平滑相关参数 ---
-    parser.add_argument('--use_spatial_blending', action='store_true', help='Enable Automated Spatial Blending for smoother deformation.')
-    parser.add_argument('--blending_knn_percent', type=float, default=0.1, help='(Auto-blending) Percentage of total points to use for KNN. Default: 0.1%%.')
-    parser.add_argument('--blending_softness', type=float, default=0.5, help='(Auto-blending) Softness factor for sigma. Larger values mean softer, broader blending. Default: 0.5.')
+    parser.add_argument('--use_spatial_blending', action='store_true', help='启用自动空间平滑以获得更平滑的形变')
+    parser.add_argument('--blending_knn_percent', type=float, default=0.1, help='(自动平滑) 用于KNN的点的百分比，默认为 0.1%%')
+    parser.add_argument('--blending_softness', type=float, default=0.5, help='(自动平滑) sigma的柔软度因子，值越大混合越柔和，默认为 0.5')
 
     args = parser.parse_args()
     

@@ -1,0 +1,17 @@
+2025-08-01 10:39:15,057 - INFO - ==============================
+TRAINING CONFIGURATION
+==============================
+2025-08-01 10:39:15,057 - INFO - data_dir: data/experiment1
+2025-08-01 10:39:15,057 - INFO - batch_size: 4
+2025-08-01 10:39:15,057 - INFO - lr: 0.001
+2025-08-01 10:39:15,057 - INFO - epochs: 100
+2025-08-01 10:39:15,058 - INFO - sensor_dim: 512
+2025-08-01 10:39:15,058 - INFO - cage_res: [15, 15, 15]
+2025-08-01 10:39:15,058 - INFO - num_workers: 1
+2025-08-01 10:39:15,058 - INFO - out_dir: outputs/experiment1
+2025-08-01 10:39:15,058 - INFO - num_fourier_bands: 8
+2025-08-01 10:39:15,058 - INFO - num_time_bands: 6
+2025-08-01 10:39:15,059 - INFO - sensor_res: [10, 10]
+2025-08-01 10:39:15,059 - INFO - device: cuda
+2025-08-01 10:39:15,059 - INFO - ==============================
+2025-08-01 10:39:15,661 - INFO - Training started! Dataset size: 90, Batch size: 4, Epochs: 100, Model params: 2650755

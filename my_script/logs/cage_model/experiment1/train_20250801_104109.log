@@ -1,0 +1,122 @@
+2025-08-01 10:41:09,973 - INFO - ==============================
+TRAINING CONFIGURATION
+==============================
+2025-08-01 10:41:09,973 - INFO - data_dir: data/experiment1
+2025-08-01 10:41:09,973 - INFO - batch_size: 4
+2025-08-01 10:41:09,973 - INFO - lr: 0.001
+2025-08-01 10:41:09,973 - INFO - epochs: 100
+2025-08-01 10:41:09,974 - INFO - sensor_dim: 512
+2025-08-01 10:41:09,974 - INFO - cage_res: [15, 15, 15]
+2025-08-01 10:41:09,974 - INFO - num_workers: 1
+2025-08-01 10:41:09,974 - INFO - out_dir: outputs/experiment1
+2025-08-01 10:41:09,974 - INFO - num_fourier_bands: 8
+2025-08-01 10:41:09,974 - INFO - num_time_bands: 6
+2025-08-01 10:41:09,975 - INFO - sensor_res: [10, 10]
+2025-08-01 10:41:09,975 - INFO - device: cuda
+2025-08-01 10:41:09,975 - INFO - ==============================
+2025-08-01 10:41:10,468 - INFO - Training started! Dataset size: 90, Batch size: 4, Epochs: 100, Model params: 2650755
+2025-08-01 10:41:20,049 - INFO - Epoch 1 | Avg Loss: 0.251678 | Min Loss: 0.184807 | Max Loss: 0.659887
+2025-08-01 10:41:27,567 - INFO - Epoch 2 | Avg Loss: 0.203314 | Min Loss: 0.132835 | Max Loss: 0.249601
+2025-08-01 10:41:34,975 - INFO - Epoch 3 | Avg Loss: 0.191809 | Min Loss: 0.115825 | Max Loss: 0.232267
+2025-08-01 10:41:42,945 - INFO - Epoch 4 | Avg Loss: 0.179023 | Min Loss: 0.134548 | Max Loss: 0.203959
+2025-08-01 10:41:50,436 - INFO - Epoch 5 | Avg Loss: 0.174020 | Min Loss: 0.123797 | Max Loss: 0.210237
+2025-08-01 10:41:58,240 - INFO - Epoch 6 | Avg Loss: 0.163355 | Min Loss: 0.132809 | Max Loss: 0.206405
+2025-08-01 10:42:06,243 - INFO - Epoch 7 | Avg Loss: 0.159817 | Min Loss: 0.109832 | Max Loss: 0.232533
+2025-08-01 10:42:14,066 - INFO - Epoch 8 | Avg Loss: 0.161118 | Min Loss: 0.130874 | Max Loss: 0.189097
+2025-08-01 10:42:21,723 - INFO - Epoch 9 | Avg Loss: 0.156007 | Min Loss: 0.107166 | Max Loss: 0.185367
+2025-08-01 10:42:29,025 - INFO - Epoch 10 | Avg Loss: 0.157777 | Min Loss: 0.133035 | Max Loss: 0.201170
+2025-08-01 10:42:36,440 - INFO - Epoch 11 | Avg Loss: 0.153397 | Min Loss: 0.109756 | Max Loss: 0.190511
+2025-08-01 10:42:43,927 - INFO - Epoch 12 | Avg Loss: 0.151540 | Min Loss: 0.114021 | Max Loss: 0.177107
+2025-08-01 10:42:51,140 - INFO - Epoch 13 | Avg Loss: 0.154744 | Min Loss: 0.123374 | Max Loss: 0.182152
+2025-08-01 10:42:58,596 - INFO - Epoch 14 | Avg Loss: 0.151554 | Min Loss: 0.079648 | Max Loss: 0.177612
+2025-08-01 10:43:05,740 - INFO - Epoch 15 | Avg Loss: 0.148135 | Min Loss: 0.100539 | Max Loss: 0.178301
+2025-08-01 10:43:12,735 - INFO - Epoch 16 | Avg Loss: 0.151334 | Min Loss: 0.117363 | Max Loss: 0.193531
+2025-08-01 10:43:20,037 - INFO - Epoch 17 | Avg Loss: 0.158034 | Min Loss: 0.118422 | Max Loss: 0.189514
+2025-08-01 10:43:27,257 - INFO - Epoch 18 | Avg Loss: 0.150222 | Min Loss: 0.087029 | Max Loss: 0.204058
+2025-08-01 10:43:34,189 - INFO - Epoch 19 | Avg Loss: 0.153531 | Min Loss: 0.125070 | Max Loss: 0.174726
+2025-08-01 10:43:41,637 - INFO - Epoch 20 | Avg Loss: 0.146952 | Min Loss: 0.096012 | Max Loss: 0.176110
+2025-08-01 10:43:49,135 - INFO - Epoch 21 | Avg Loss: 0.151023 | Min Loss: 0.114959 | Max Loss: 0.174693
+2025-08-01 10:43:56,566 - INFO - Epoch 22 | Avg Loss: 0.149744 | Min Loss: 0.124018 | Max Loss: 0.170083
+2025-08-01 10:44:03,767 - INFO - Epoch 23 | Avg Loss: 0.145935 | Min Loss: 0.093755 | Max Loss: 0.182170
+2025-08-01 10:44:11,198 - INFO - Epoch 24 | Avg Loss: 0.144413 | Min Loss: 0.113716 | Max Loss: 0.165742
+2025-08-01 10:44:18,545 - INFO - Epoch 25 | Avg Loss: 0.146701 | Min Loss: 0.118897 | Max Loss: 0.170647
+2025-08-01 10:44:25,958 - INFO - Epoch 26 | Avg Loss: 0.149094 | Min Loss: 0.110978 | Max Loss: 0.170941
+2025-08-01 10:44:33,125 - INFO - Epoch 27 | Avg Loss: 0.153206 | Min Loss: 0.126698 | Max Loss: 0.191598
+2025-08-01 10:44:40,478 - INFO - Epoch 28 | Avg Loss: 0.151561 | Min Loss: 0.094581 | Max Loss: 0.176851
+2025-08-01 10:44:48,733 - INFO - Epoch 29 | Avg Loss: 0.151916 | Min Loss: 0.115362 | Max Loss: 0.182745
+2025-08-01 10:44:56,413 - INFO - Epoch 30 | Avg Loss: 0.149452 | Min Loss: 0.118195 | Max Loss: 0.176251
+2025-08-01 10:45:04,600 - INFO - Epoch 31 | Avg Loss: 0.147110 | Min Loss: 0.109516 | Max Loss: 0.183075
+2025-08-01 10:45:12,286 - INFO - Epoch 32 | Avg Loss: 0.144461 | Min Loss: 0.095583 | Max Loss: 0.176863
+2025-08-01 10:45:20,967 - INFO - Epoch 33 | Avg Loss: 0.144593 | Min Loss: 0.114877 | Max Loss: 0.164306
+2025-08-01 10:45:29,007 - INFO - Epoch 34 | Avg Loss: 0.142624 | Min Loss: 0.116698 | Max Loss: 0.184637
+2025-08-01 10:45:37,985 - INFO - Epoch 35 | Avg Loss: 0.144358 | Min Loss: 0.059583 | Max Loss: 0.183364
+2025-08-01 10:45:46,023 - INFO - Epoch 36 | Avg Loss: 0.141267 | Min Loss: 0.076750 | Max Loss: 0.170776
+2025-08-01 10:45:53,501 - INFO - Epoch 37 | Avg Loss: 0.143460 | Min Loss: 0.109883 | Max Loss: 0.176059
+2025-08-01 10:46:00,720 - INFO - Epoch 38 | Avg Loss: 0.142700 | Min Loss: 0.103607 | Max Loss: 0.162544
+2025-08-01 10:46:08,069 - INFO - Epoch 39 | Avg Loss: 0.144077 | Min Loss: 0.081740 | Max Loss: 0.175698
+2025-08-01 10:46:15,408 - INFO - Epoch 40 | Avg Loss: 0.143900 | Min Loss: 0.063945 | Max Loss: 0.172609
+2025-08-01 10:46:22,499 - INFO - Epoch 41 | Avg Loss: 0.141531 | Min Loss: 0.081810 | Max Loss: 0.160306
+2025-08-01 10:46:29,820 - INFO - Epoch 42 | Avg Loss: 0.141750 | Min Loss: 0.071062 | Max Loss: 0.170634
+2025-08-01 10:46:36,961 - INFO - Epoch 43 | Avg Loss: 0.142789 | Min Loss: 0.098153 | Max Loss: 0.161149
+2025-08-01 10:46:44,058 - INFO - Epoch 44 | Avg Loss: 0.142432 | Min Loss: 0.112999 | Max Loss: 0.163628
+2025-08-01 10:46:51,763 - INFO - Epoch 45 | Avg Loss: 0.143340 | Min Loss: 0.067621 | Max Loss: 0.181235
+2025-08-01 10:46:58,946 - INFO - Epoch 46 | Avg Loss: 0.139701 | Min Loss: 0.074378 | Max Loss: 0.162015
+2025-08-01 10:47:06,174 - INFO - Epoch 47 | Avg Loss: 0.142183 | Min Loss: 0.090359 | Max Loss: 0.161740
+2025-08-01 10:47:13,720 - INFO - Epoch 48 | Avg Loss: 0.139870 | Min Loss: 0.100662 | Max Loss: 0.162739
+2025-08-01 10:47:20,940 - INFO - Epoch 49 | Avg Loss: 0.140764 | Min Loss: 0.087272 | Max Loss: 0.166786
+2025-08-01 10:47:28,350 - INFO - Epoch 50 | Avg Loss: 0.142127 | Min Loss: 0.094743 | Max Loss: 0.172606
+2025-08-01 10:47:35,781 - INFO - Epoch 51 | Avg Loss: 0.141715 | Min Loss: 0.097459 | Max Loss: 0.170197
+2025-08-01 10:47:42,907 - INFO - Epoch 52 | Avg Loss: 0.141931 | Min Loss: 0.092169 | Max Loss: 0.170816
+2025-08-01 10:47:50,301 - INFO - Epoch 53 | Avg Loss: 0.141082 | Min Loss: 0.097763 | Max Loss: 0.174035
+2025-08-01 10:47:57,693 - INFO - Epoch 54 | Avg Loss: 0.145704 | Min Loss: 0.085161 | Max Loss: 0.175464
+2025-08-01 10:48:04,871 - INFO - Epoch 55 | Avg Loss: 0.142165 | Min Loss: 0.102357 | Max Loss: 0.157240
+2025-08-01 10:48:11,812 - INFO - Epoch 56 | Avg Loss: 0.140528 | Min Loss: 0.097097 | Max Loss: 0.166514
+2025-08-01 10:48:19,138 - INFO - Epoch 57 | Avg Loss: 0.139115 | Min Loss: 0.096560 | Max Loss: 0.159995
+2025-08-01 10:48:26,516 - INFO - Epoch 58 | Avg Loss: 0.141531 | Min Loss: 0.114109 | Max Loss: 0.169588
+2025-08-01 10:48:33,967 - INFO - Epoch 59 | Avg Loss: 0.141575 | Min Loss: 0.077493 | Max Loss: 0.170181
+2025-08-01 10:48:41,212 - INFO - Epoch 60 | Avg Loss: 0.144204 | Min Loss: 0.083426 | Max Loss: 0.175119
+2025-08-01 10:48:48,691 - INFO - Epoch 61 | Avg Loss: 0.146715 | Min Loss: 0.069047 | Max Loss: 0.173702
+2025-08-01 10:48:56,065 - INFO - Epoch 62 | Avg Loss: 0.141447 | Min Loss: 0.102372 | Max Loss: 0.188171
+2025-08-01 10:49:03,276 - INFO - Epoch 63 | Avg Loss: 0.143987 | Min Loss: 0.102313 | Max Loss: 0.180714
+2025-08-01 10:49:10,676 - INFO - Epoch 64 | Avg Loss: 0.141144 | Min Loss: 0.100130 | Max Loss: 0.168469
+2025-08-01 10:49:17,985 - INFO - Epoch 65 | Avg Loss: 0.139448 | Min Loss: 0.105493 | Max Loss: 0.175270
+2025-08-01 10:49:25,368 - INFO - Epoch 66 | Avg Loss: 0.141941 | Min Loss: 0.106027 | Max Loss: 0.168314
+2025-08-01 10:49:32,692 - INFO - Epoch 67 | Avg Loss: 0.142189 | Min Loss: 0.090453 | Max Loss: 0.168342
+2025-08-01 10:49:40,083 - INFO - Epoch 68 | Avg Loss: 0.138745 | Min Loss: 0.093983 | Max Loss: 0.162637
+2025-08-01 10:49:47,463 - INFO - Epoch 69 | Avg Loss: 0.137758 | Min Loss: 0.089262 | Max Loss: 0.160800
+2025-08-01 10:49:54,658 - INFO - Epoch 70 | Avg Loss: 0.142543 | Min Loss: 0.110689 | Max Loss: 0.182200
+2025-08-01 10:50:01,926 - INFO - Epoch 71 | Avg Loss: 0.138380 | Min Loss: 0.081419 | Max Loss: 0.173004
+2025-08-01 10:50:09,165 - INFO - Epoch 72 | Avg Loss: 0.139844 | Min Loss: 0.108623 | Max Loss: 0.162816
+2025-08-01 10:50:16,687 - INFO - Epoch 73 | Avg Loss: 0.143062 | Min Loss: 0.122717 | Max Loss: 0.171653
+2025-08-01 10:50:24,139 - INFO - Epoch 74 | Avg Loss: 0.138812 | Min Loss: 0.067057 | Max Loss: 0.173684
+2025-08-01 10:50:31,227 - INFO - Epoch 75 | Avg Loss: 0.138333 | Min Loss: 0.076413 | Max Loss: 0.171447
+2025-08-01 10:50:38,430 - INFO - Epoch 76 | Avg Loss: 0.136688 | Min Loss: 0.091454 | Max Loss: 0.164936
+2025-08-01 10:50:45,594 - INFO - Epoch 77 | Avg Loss: 0.142453 | Min Loss: 0.054996 | Max Loss: 0.163660
+2025-08-01 10:50:53,048 - INFO - Epoch 78 | Avg Loss: 0.142614 | Min Loss: 0.104542 | Max Loss: 0.168885
+2025-08-01 10:51:00,248 - INFO - Epoch 79 | Avg Loss: 0.140053 | Min Loss: 0.077391 | Max Loss: 0.163974
+2025-08-01 10:51:07,465 - INFO - Epoch 80 | Avg Loss: 0.139626 | Min Loss: 0.082775 | Max Loss: 0.159336
+2025-08-01 10:51:14,864 - INFO - Epoch 81 | Avg Loss: 0.136945 | Min Loss: 0.063268 | Max Loss: 0.158313
+2025-08-01 10:51:22,283 - INFO - Epoch 82 | Avg Loss: 0.144024 | Min Loss: 0.116138 | Max Loss: 0.168295
+2025-08-01 10:51:29,628 - INFO - Epoch 83 | Avg Loss: 0.140547 | Min Loss: 0.110108 | Max Loss: 0.167108
+2025-08-01 10:51:36,566 - INFO - Epoch 84 | Avg Loss: 0.135349 | Min Loss: 0.102287 | Max Loss: 0.159759
+2025-08-01 10:51:44,464 - INFO - Epoch 85 | Avg Loss: 0.136379 | Min Loss: 0.095093 | Max Loss: 0.183346
+2025-08-01 10:51:51,756 - INFO - Epoch 86 | Avg Loss: 0.133616 | Min Loss: 0.071703 | Max Loss: 0.166805
+2025-08-01 10:51:59,148 - INFO - Epoch 87 | Avg Loss: 0.138246 | Min Loss: 0.071031 | Max Loss: 0.164170
+2025-08-01 10:52:06,763 - INFO - Epoch 88 | Avg Loss: 0.139416 | Min Loss: 0.094440 | Max Loss: 0.167485
+2025-08-01 10:52:14,599 - INFO - Epoch 89 | Avg Loss: 0.134756 | Min Loss: 0.071963 | Max Loss: 0.154238
+2025-08-01 10:52:22,333 - INFO - Epoch 90 | Avg Loss: 0.135254 | Min Loss: 0.096529 | Max Loss: 0.156281
+2025-08-01 10:52:30,301 - INFO - Epoch 91 | Avg Loss: 0.143295 | Min Loss: 0.110659 | Max Loss: 0.177180
+2025-08-01 10:52:37,822 - INFO - Epoch 92 | Avg Loss: 0.133176 | Min Loss: 0.068030 | Max Loss: 0.152462
+2025-08-01 10:52:45,142 - INFO - Epoch 93 | Avg Loss: 0.130417 | Min Loss: 0.063971 | Max Loss: 0.162131
+2025-08-01 10:52:52,595 - INFO - Epoch 94 | Avg Loss: 0.131539 | Min Loss: 0.092281 | Max Loss: 0.157142
+2025-08-01 10:53:00,051 - INFO - Epoch 95 | Avg Loss: 0.132128 | Min Loss: 0.092702 | Max Loss: 0.152768
+2025-08-01 10:53:07,564 - INFO - Epoch 96 | Avg Loss: 0.137634 | Min Loss: 0.097879 | Max Loss: 0.170271
+2025-08-01 10:53:15,264 - INFO - Epoch 97 | Avg Loss: 0.132884 | Min Loss: 0.086700 | Max Loss: 0.158321
+2025-08-01 10:53:23,127 - INFO - Epoch 98 | Avg Loss: 0.136186 | Min Loss: 0.099153 | Max Loss: 0.159988
+2025-08-01 10:53:31,022 - INFO - Epoch 99 | Avg Loss: 0.135706 | Min Loss: 0.053432 | Max Loss: 0.171615
+2025-08-01 10:53:38,877 - INFO - Epoch 100 | Avg Loss: 0.135907 | Min Loss: 0.086720 | Max Loss: 0.165278
+2025-08-01 10:53:38,912 - INFO - Starting inference phase...
+2025-08-01 10:53:56,490 - INFO - Training complete! Model saved to: outputs/experiment1\deform_model_final.pth
+2025-08-01 10:53:56,490 - INFO -   - Generated 90 cage_files files
+2025-08-01 10:53:56,490 - INFO -   - Generated 90 object_files files
+2025-08-01 10:53:56,493 - INFO - Metrics saved to logs\cage_model\experiment1\training_metrics.json
