@@ -2,6 +2,7 @@ import serial
 import numpy as np
 import tkinter as tk
 from tkinter import filedialog, messagebox
+import tkinter.ttk as ttk
 import threading
 import csv
 import os
@@ -11,6 +12,7 @@ import time
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+import argparse
 
 # --- Configuration & Environment ---
 def detect_serial_port():
@@ -167,11 +169,17 @@ class App:
         root.geometry(f"{window_width}x{window_height}+{x}+{y}")
         root.minsize(800, 500)  # Minimum size for usability
         
-        # Configure grid weights for responsive layout
+        # Configure root window for responsive layout
         root.grid_rowconfigure(0, weight=1)
-        root.grid_columnconfigure(0, weight=3)  # Give more weight to plot area
-        root.grid_columnconfigure(1, weight=1)  # Less weight to control panel
+        root.grid_columnconfigure(0, weight=1)
 
+        # Create resizable PanedWindow for main layout
+        self.main_paned = ttk.PanedWindow(root, orient=tk.HORIZONTAL)
+        self.main_paned.grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
+
+        # Left frame for plot
+        plot_frame = tk.Frame(self.main_paned)
+        
         # Create 3D matplotlib figure optimized for small screens
         self.fig = plt.figure(figsize=(8, 6))
         self.ax = self.fig.add_subplot(111, projection='3d')
@@ -179,14 +187,16 @@ class App:
         # Set tight layout to prevent overlap
         self.fig.tight_layout(pad=1.0)
         
-        # Place canvas on the left side
-        self.canvas = FigureCanvasTkAgg(self.fig, master=root)
-        self.canvas.get_tk_widget().grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
+        # Place canvas in plot frame
+        self.canvas = FigureCanvasTkAgg(self.fig, master=plot_frame)
+        self.canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
 
         # Right side control panel with enhanced design
-        control_frame = tk.Frame(root, width=240, bg="#ffffff", relief=tk.RAISED, bd=3)
-        control_frame.grid(row=0, column=1, sticky="ns", padx=10, pady=10)
-        control_frame.grid_propagate(False)  # Fixed control panel width
+        control_frame = tk.Frame(self.main_paned, width=280, bg="#ffffff", relief=tk.RAISED, bd=3)
+        
+        # Add frames to PanedWindow (plot area gets more initial space)
+        self.main_paned.add(plot_frame, weight=3)
+        self.main_paned.add(control_frame, weight=1)
 
         # Add title label with improved styling
         title_label = tk.Label(control_frame, text="⚙️ Control Panel", 
@@ -199,25 +209,25 @@ class App:
         
         # Save Frame button with enhanced styling
         btn_save = tk.Button(btn_frame, text="💾 Save Frame", command=self.save_frame, 
-                           width=16, height=2, bg="#27ae60", fg="white", 
+                           width=16, height=2, bg="#27ae60", fg="black", 
                            font=("Helvetica", 12, "bold"), relief=tk.RAISED, bd=4,
-                           activebackground="#2ecc71", activeforeground="white",
+                           activebackground="#2ecc71", activeforeground="black",
                            cursor="hand2")
         btn_save.pack(pady=10)
         
         # Export CSV button with enhanced styling
         btn_exp = tk.Button(btn_frame, text="📊 Export CSV", command=self.export_csv,
-                          width=16, height=2, bg="#3498db", fg="white",
+                          width=16, height=2, bg="#3498db", fg="black",
                           font=("Helvetica", 12, "bold"), relief=tk.RAISED, bd=4,
-                          activebackground="#5dade2", activeforeground="white",
+                          activebackground="#5dade2", activeforeground="black",
                           cursor="hand2")
         btn_exp.pack(pady=10)
 
         # Mode switch button with enhanced styling
         self.mode_btn = tk.Button(btn_frame, text="🔄 2D Mode", command=self.toggle_display_mode,
-                           width=16, height=2, bg="#e67e22", fg="white",
+                           width=16, height=2, bg="#e67e22", fg="black",
                            font=("Helvetica", 12, "bold"), relief=tk.RAISED, bd=4,
-                           activebackground="#f39c12", activeforeground="white",
+                           activebackground="#f39c12", activeforeground="black",
                            cursor="hand2")
         self.mode_btn.pack(pady=10)
 
@@ -264,27 +274,27 @@ class App:
         view_btn_frame.pack(pady=(5, 10))
         
         btn_top = tk.Button(view_btn_frame, text="⬆️", command=lambda: self.adjust_view("top"),
-                          width=4, height=1, bg="#8e44ad", fg="white", font=("Helvetica", 11, "bold"),
+                          width=4, height=1, bg="#8e44ad", fg="black", font=("Helvetica", 11, "bold"),
                           relief=tk.RAISED, bd=3, cursor="hand2")
         btn_top.grid(row=0, column=1, padx=3, pady=3)
         
         btn_left = tk.Button(view_btn_frame, text="⬅️", command=lambda: self.adjust_view("left"),
-                           width=4, height=1, bg="#8e44ad", fg="white", font=("Helvetica", 11, "bold"),
+                           width=4, height=1, bg="#8e44ad", fg="black", font=("Helvetica", 11, "bold"),
                            relief=tk.RAISED, bd=3, cursor="hand2")
         btn_left.grid(row=1, column=0, padx=3, pady=3)
         
         btn_reset = tk.Button(view_btn_frame, text="🎯", command=lambda: self.adjust_view("reset"),
-                            width=4, height=1, bg="#7f8c8d", fg="white", font=("Helvetica", 11, "bold"),
+                            width=4, height=1, bg="#7f8c8d", fg="black", font=("Helvetica", 11, "bold"),
                             relief=tk.RAISED, bd=3, cursor="hand2")
         btn_reset.grid(row=1, column=1, padx=3, pady=3)
         
         btn_right = tk.Button(view_btn_frame, text="➡️", command=lambda: self.adjust_view("right"),
-                            width=4, height=1, bg="#8e44ad", fg="white", font=("Helvetica", 11, "bold"),
+                            width=4, height=1, bg="#8e44ad", fg="black", font=("Helvetica", 11, "bold"),
                             relief=tk.RAISED, bd=3, cursor="hand2")
         btn_right.grid(row=1, column=2, padx=3, pady=3)
         
         btn_bottom = tk.Button(view_btn_frame, text="⬇️", command=lambda: self.adjust_view("bottom"),
-                             width=4, height=1, bg="#8e44ad", fg="white", font=("Helvetica", 11, "bold"),
+                             width=4, height=1, bg="#8e44ad", fg="black", font=("Helvetica", 11, "bold"),
                              relief=tk.RAISED, bd=3, cursor="hand2")
         btn_bottom.grid(row=2, column=1, padx=3, pady=3)
         
@@ -304,6 +314,14 @@ class App:
     def toggle_display_mode(self):
         """Toggle between 2D and 3D display modes"""
         self.display_mode_3d = not self.display_mode_3d
+        
+        # Clear existing text annotations
+        for text in getattr(self, '_text_annotations', []):
+            text.remove()
+        for text in getattr(self, '_text_annotations_3d', []):
+            text.remove()
+        self._text_annotations = []
+        self._text_annotations_3d = []
         
         # Reset plot objects
         self.bars = None
@@ -454,18 +472,24 @@ class App:
         
         self.last_update_time = current_time
         
-        # Normalize data
+        # Normalize data (for saving)
         norm = (current_raw - MIN_ADC) / (MAX_ADC - MIN_ADC)
         norm = np.clip(norm, 0, 1)
         
+        # Create display data (1 - norm for higher values with more pressure)
+        display_norm = 1 - norm
+        
         # Flip Y-axis to match physical sensor orientation
-        norm_flipped = np.flipud(norm)
+        display_flipped = np.flipud(display_norm)
         
         # Update heatmap
         if self.heatmap_im is not None:
-            self.heatmap_im.set_data(norm_flipped)
+            self.heatmap_im.set_data(display_flipped)
         
-        # Update statistics
+        # Add value labels on 2D heatmap
+        self.add_2d_value_labels(display_flipped)
+        
+        # Update statistics (use original norm for consistency)
         self.update_statistics(norm)
         
         # Refresh canvas
@@ -489,15 +513,18 @@ class App:
         
         self.last_update_time = current_time
         
-        # Normalize and update
+        # Normalize data (for saving)
         norm = (current_raw - MIN_ADC) / (MAX_ADC - MIN_ADC)
         norm = np.clip(norm, 0, 1)
         
+        # Create display data (1 - norm for higher values with more pressure)
+        display_norm = 1 - norm
+        
         # Flip Y-axis to match physical sensor orientation
-        norm_flipped = np.flipud(norm)
+        display_flipped = np.flipud(display_norm)
         
         # Flatten data for bar chart heights
-        dz = norm_flipped.flatten()
+        dz = display_flipped.flatten()
         
         # Only clear and redraw if this is the first update or data has significantly changed
         if self.bars is None:
@@ -536,7 +563,10 @@ class App:
                                edgecolor='darkgray', linewidth=0.5,
                                shade=True)
         
-        # Update statistics
+        # Add value labels on 3D bars
+        self.add_3d_value_labels(display_flipped, dz)
+        
+        # Update statistics (use original norm for consistency)
         self.update_statistics(norm)
         
         # Refresh canvas less frequently
@@ -547,6 +577,53 @@ class App:
         
         # Continue updating
         self.root.after(200, self.update_plot)  # Slower update rate
+
+    def add_2d_value_labels(self, display_data):
+        """Add value labels to 2D heatmap"""
+        # Clear existing text annotations
+        for text in getattr(self, '_text_annotations', []):
+            text.remove()
+        self._text_annotations = []
+        
+        # Add text annotations with values
+        rows, cols = display_data.shape
+        for i in range(rows):
+            for j in range(cols):
+                value = display_data[i, j]
+                # Only show values above a threshold to avoid clutter
+                if value > 0.1:  # Show values > 0.1
+                    text = self.ax.text(j, i, f'{value:.2f}', 
+                                      ha='center', va='center', 
+                                      color='black', fontsize=8, 
+                                      fontweight='bold',
+                                      bbox=dict(boxstyle='round,pad=0.1', 
+                                              facecolor='white', alpha=0.7))
+                    self._text_annotations.append(text)
+
+    def add_3d_value_labels(self, display_data, dz):
+        """Add value labels to 3D bar chart"""
+        # Clear existing text annotations
+        for text in getattr(self, '_text_annotations_3d', []):
+            text.remove()
+        self._text_annotations_3d = []
+        
+        # Add text annotations on top of bars
+        rows, cols = display_data.shape
+        for i in range(rows):
+            for j in range(cols):
+                value = display_data[i, j]
+                # Only show values above a threshold to avoid clutter
+                if value > 0.1:  # Show values > 0.1
+                    # Calculate position on top of the bar
+                    x_pos = j
+                    y_pos = i  
+                    z_pos = value + 0.05  # Slightly above the bar
+                    
+                    text = self.ax.text(x_pos, y_pos, z_pos, f'{value:.2f}', 
+                                      ha='center', va='center', 
+                                      color='black', fontsize=7, 
+                                      fontweight='bold')
+                    self._text_annotations_3d.append(text)
 
     def update_statistics(self, norm):
         """Update statistics display"""
