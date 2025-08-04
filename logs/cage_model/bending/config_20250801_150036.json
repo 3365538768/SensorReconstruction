@@ -1,0 +1,25 @@
+{
+  "timestamp": "2025-08-01T15:00:36.839040",
+  "log_type": "cage_model",
+  "experiment_name": "bending",
+  "config": {
+    "data_dir": "data/bending",
+    "out_dir": "outputs/bending",
+    "cage_res": [
+      15,
+      15,
+      15
+    ],
+    "sensor_res": [
+      10,
+      10
+    ],
+    "batch_size": 4,
+    "epochs": 100,
+    "lr": 0.001,
+    "sensor_dim": 512,
+    "num_fourier_bands": 8,
+    "num_time_bands": 6,
+    "device": "cuda"
+  }
+}

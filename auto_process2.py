@@ -12,7 +12,7 @@ def main():
     # 根目录 & my_script 目录
     root = os.getcwd()
     script_dir = os.path.join(root, "my_script")
-    train_py = os.path.join(script_dir, "train.py")
+    train_py = os.path.join(script_dir, "train_multi.py")
 
     if not os.path.isfile(train_py):
         sys.exit(f"Error: train.py not found in {script_dir}")
