@@ -56,7 +56,7 @@ def main():
         print(f"[WARN] 未发现 JSON 文件", file=sys.stderr)
 
     # 2. 推理 infer.py
-    infer_py = os.path.join(root, 'my_script', 'infer.py')
+    infer_py = os.path.join(root, 'my_script', 'infer_multi.py')
     model_path = os.path.join(root, 'my_script', 'outputs', model_name, 'deform_model_final.pth')
     out_dir = os.path.join(root, 'my_script', 'inference_outputs', model_name)
     os.makedirs(out_dir, exist_ok=True)
