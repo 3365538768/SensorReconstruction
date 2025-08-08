@@ -34,14 +34,20 @@ for light in (o for o in bpy.data.objects if o.type == 'LIGHT'):
     light.data.use_shadow = False
 
 # —— 5. 要渲染的对象列表与对应 time 映射 ——
-objects_to_capture = ["A", "B", "C", "D"]
+objects_to_capture = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
 time_map = {
     "A": 0.0,
-    "B": 0.4,
-    "C": 0.8,
-    "D": 1.0,
+    "B": 0.1,
+    "C": 0.2,
+    "D": 0.3,
+    "E": 0.4,
+    "F": 0.5,
+    "G": 0.6,
+    "H": 0.7,
+    "I": 0.8,
+    "J": 0.9,
 }
-output_root = "D:/4DGaussians/my_script/originframe"
+output_root = "/Users/chenzilang/Desktop/robot_data/robot_bending"
 
 # —— 6. 主循环：逐个对象渲染 ——
 for obj_name in objects_to_capture:
@@ -104,4 +110,4 @@ for obj_name in objects_to_capture:
     with open(os.path.join(obj_dir, "transforms.json"), 'w') as f:
         json.dump(transforms, f, indent=4)
 
-print("渲染完成，各对象的 time 已按 A–E 映射为 0,0.2,0.4,0.7,1.0。")
+print("渲染完成，各对象的 time 已按 A-J 映射为 0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9。")

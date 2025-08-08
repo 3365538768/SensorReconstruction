@@ -1,3 +1,36 @@
+# <Cursor-AI 2025-08-08 04:36:51>
+
+## 修改目的
+
+按要求将 `backup/Sensor/robot_bending/sensor_set.csv` 拆分为 9 个文件
+（`sensor1.csv` 到 `sensor9.csv`），便于后续传感器分组处理与分析。
+
+## 修改内容摘要
+
+- 新增脚本：`scripts/split_sensor_set.py`
+- 规则实现：数据行（去除表头）按 9 行间隔交错分配至 `sensor1..sensor9`
+- 处理边界：忽略结尾空行，确保每个传感器文件各 10 行（本数据集共 90 行）
+- 已执行脚本并在原目录生成 `sensor1.csv` 至 `sensor9.csv`
+
+## 影响范围
+
+- 目录：`backup/Sensor/robot_bending/`
+- 文件：新生成 `sensor1.csv` ... `sensor9.csv`（均含原始表头）
+- 脚本：`scripts/split_sensor_set.py`（独立、无侵入，不修改现有源码）
+
+## 技术细节
+
+- 输入：`sensor_set.csv`，首行为表头，后续为数据行
+- 分配算法：对数据行按 1 开始计数，`group=((idx-1)%9)+1`，写入 `sensor{group}.csv`
+- 健壮性：
+  - CSV 读取与写入均含异常处理
+  - 过滤空白行：`if r and any(c.strip() for c in r)`
+  - 输出包含原始表头
+- 实际执行与统计：
+  - 输入有效数据行：90
+  - 输出文件：9 个
+  - 每个输出行数：10 行
+
 # <Cursor-AI 2025-08-04 16:08:53>
 
 ## 修改目的

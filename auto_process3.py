@@ -73,22 +73,22 @@ def main():
         sys.exit(1)
 
     # 3. 渲染 custom_render.py
-    custom_render_py = os.path.join(root, 'custom_render.py')
-    model_path_render = os.path.join(root, 'output', 'dnerf', model_name)
-    source_path = os.path.join(root, 'data', 'dnerf', model_name)
-    ply_dir = os.path.join(root, 'my_script', 'inference_outputs', model_name, 'objects_world')
+    # custom_render_py = os.path.join(root, 'custom_render.py')
+    # model_path_render = os.path.join(root, 'output', 'dnerf', model_name)
+    # source_path = os.path.join(root, 'data', 'dnerf', model_name)
+    # ply_dir = os.path.join(root, 'my_script', 'inference_outputs', model_name, 'objects_world')
 
-    cmd_render = [
-        sys.executable, custom_render_py,
-        '--model_path', model_path_render,
-        '--source_path', source_path,
-        '--ply_dir', ply_dir,
-        '--camera', camera,
-        '--model_name', model_name,
-    ]
-    print("[INFO] 运行 custom_render.py: \n  " + " ".join(cmd_render))
-    if subprocess.run(cmd_render).returncode != 0:
-        sys.exit(1)
+    # cmd_render = [
+    #     sys.executable, custom_render_py,
+    #     '--model_path', model_path_render,
+    #     '--source_path', source_path,
+    #     '--ply_dir', ply_dir,
+    #     '--camera', camera,
+    #     '--model_name', model_name,
+    # ]
+    # print("[INFO] 运行 custom_render.py: \n  " + " ".join(cmd_render))
+    # if subprocess.run(cmd_render).returncode != 0:
+    #     sys.exit(1)
 
 if __name__ == '__main__':
     main()
